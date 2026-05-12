@@ -15,4 +15,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Django-ni ishga tushirish
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT
+CMD python manage.py migrate && gunicorn Boshliq.wsgi:application --bind 0.0.0.0:$PORT
