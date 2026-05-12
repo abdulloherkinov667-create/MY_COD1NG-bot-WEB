@@ -30,4 +30,4 @@ EXPOSE 8080
 
 # 8. Ishga tushirish buyrug'i (JSON formatida)
 # Railway signallarini to'g'ri qabul qilishi uchun shunday yozish tavsiya etiladi
-CMD ["sh", "-c", "gunicorn Boshliq.wsgi:application --bind 0.0.0.0:${PORT}"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py check --settings=Boshliq.settings && gunicorn Boshliq.wsgi:application --bind 0.0.0.0:${PORT} --workers 1 --log-level debug --access-logfile - --error-logfile -"]
