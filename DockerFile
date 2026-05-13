@@ -15,7 +15,6 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # 5. Pip-ni yangilash va kutubxonalarni o'rnatish
@@ -26,16 +25,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # 6. Loyihani nusxalash
 COPY . .
 
-# 7. Static fayllarni to'plash
-RUN python manage.py collectstatic --noinput --clear 2>&1 || echo "Static files collection skipped"
-
-# 8. Portni ochish
+# 7. Portni ochish
 EXPOSE 8080
 
-# 9. Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8080/health/ || exit 1
-
-# 10. Ishga tushirish buyrug'i (JSON formatida)
+# 8. Ishga tushirish buyrug'i (JSON formatida)
 # Railway signallarini to'g'ri qabul qilishi uchun shunday yozish tavsiya etiladi
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py check --settings=Boshliq.settings && exec gunicorn Boshliq.wsgi:application --bind 0.0.0.0:${PORT} --workers 1 --timeout 120 --log-level debug --access-logfile - --error-logfile -"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py check --settings=Boshliq.settings && exec gunicorn Boshliq.wsgi:application --bind 0.0.0.0:${PORT} --workers 1 --log-level debug --access-logfile - --error-logfile -"]

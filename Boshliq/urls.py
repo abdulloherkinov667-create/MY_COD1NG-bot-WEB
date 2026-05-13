@@ -16,10 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app.views import error_html, health_check
+from app.views import error_html
 
 urlpatterns = [
-    path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
     path("", error_html, name='error'),
 ]
