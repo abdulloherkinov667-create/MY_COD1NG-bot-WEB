@@ -1,117 +1,449 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tez Kunda | Mini App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --tg-theme-bg-color: #ffffff;
-            --tg-theme-text-color: #000000;
-            --tg-theme-button-color: #2481cc;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>My_cod1ng</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: rgba(255,255,255,0.07);
+    --accent: #5b6af0;
+    --accent-glow: rgba(91,106,240,0.25);
+    --text: #f0eff5;
+    --muted: #6b6a80;
+    --success: #34d399;
+    --r: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    margin: 0 auto;
+  }
 
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            text-align: center;
-        }
+  /* ── HEADER ── */
+  .header {
+    padding: 2rem 1.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .logo-wrap {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #5b6af0, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 24px rgba(91,106,240,0.35);
+  }
+  .header-text h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .header-text p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .notif-btn {
+    margin-left: auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+  .notif-btn:active { background: var(--surface2); }
 
-        .container {
-            padding: 20px;
-        }
+  /* ── STATS BAR ── */
+  .stats-bar {
+    margin: 0 1.5rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+  .stat-item + .stat-item {
+    border-left: 1px solid var(--border);
+  }
+  .stat-val {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-val span { color: var(--accent); }
+  .stat-lbl {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: center;
+  }
 
-        .rocket-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
+  /* ── MAIN BUTTONS ── */
+  .section-label {
+    padding: 0 1.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 0.75rem;
+  }
+  .menu-grid {
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    flex: 1;
+  }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
+  /* primary card */
+  .menu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.15s, border-color 0.18s;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-card:active { transform: scale(0.985); background: var(--surface2); }
+  .menu-card.primary {
+    background: linear-gradient(135deg, #3d4ed6, #5b6af0);
+    border-color: rgba(91,106,240,0.4);
+    box-shadow: 0 8px 24px rgba(91,106,240,0.3);
+  }
+  .menu-card.primary:active { opacity: 0.9; }
+  .card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .menu-card.primary .card-icon {
+    background: rgba(255,255,255,0.18);
+  }
+  .icon-purple { background: rgba(139,92,246,0.18); }
+  .icon-blue   { background: rgba(59,130,246,0.15); }
+  .icon-green  { background: rgba(52,211,153,0.15); }
+  .icon-orange { background: rgba(251,146,60,0.15); }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .menu-card.primary .card-title { color: #fff; }
+  .card-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .menu-card.primary .card-desc { color: rgba(255,255,255,0.65); }
+  .card-arrow {
+    color: var(--muted);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .menu-card.primary .card-arrow { color: rgba(255,255,255,0.6); }
+  .badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: 4px;
+  }
+  .badge.green { background: var(--success); color: #0a1a12; }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
+  /* ── RECENT ── */
+  .recent-section {
+    padding: 1.5rem 1.5rem 0;
+  }
+  .recent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+  .recent-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .recent-link {
+    font-size: 0.75rem;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .recent-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .recent-item:active { background: var(--surface2); }
+  .recent-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    background: var(--surface2);
+  }
+  .recent-info { flex: 1; min-width: 0; }
+  .recent-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .recent-meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .recent-views {
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+  }
 
-        p {
-            font-size: 16px;
-            opacity: 0.8;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-
-        .badge {
-            background-color: var(--tg-theme-button-color);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3);
-        }
-
-        .dots-container {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--tg-theme-button-color);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-    </style>
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    margin-top: auto;
+    padding: 0.85rem 1.5rem 1.5rem;
+    display: flex;
+    justify-content: space-around;
+    background: rgba(15,15,19,0.95);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    bottom: 0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    flex: 1;
+  }
+  .nav-item:active { opacity: 0.6; }
+  .nav-icon {
+    width: 42px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.15rem;
+    transition: background 0.2s;
+  }
+  .nav-item.active .nav-icon {
+    background: var(--accent-glow);
+  }
+  .nav-label {
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .nav-item.active .nav-label { color: var(--accent); }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="rocket-icon">🚀</div>
-        <br>
-        <div class="badge">YANGILANISH</div>
-        <h1>Yaqin orada qo'shiladi</h1>
-        <p>Biz hozirda ushbu Mini App bo'limini yanada mukammal qilish ustida ishlayapmiz. <br> Judayam oz qoldi!</p>
-        
-        <div class="dots-container">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-    </div>
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-wrap">🎬</div>
+  <div class="header-text">
+    <h1>My_cod1ng</h1>
+    <p>Video yuklash va boshqarish</p>
+  </div>
+  <div class="notif-btn">🔔</div>
+</div>
 
-    <script>
-        // Telegram Web App ranglariga moslashish
-        const tele = window.Telegram.WebApp;
-        tele.expand(); // Appni to'liq ekranga yoyish
-        tele.ready();
-    </script>
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-val">24</div>
+    <div class="stat-lbl">Videolar</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">1<span>.</span>2K</div>
+    <div class="stat-lbl">Ko'rishlar</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">98<span>%</span></div>
+    <div class="stat-lbl">Faollik</div>
+  </div>
+</div>
+
+<!-- MAIN MENU -->
+<div class="section-label">Asosiy</div>
+<div class="menu-grid">
+
+  <!-- Video yuklash — PRIMARY -->
+  <div class="menu-card primary">
+    <div class="card-icon">🎥</div>
+    <div class="card-body">
+      <div class="card-title">Video yuklash</div>
+      <div class="card-desc">Yangi video qo'shish</div>
+    </div>
+    <div class="card-arrow">›</div>
+  </div>
+
+  <!-- Mening videolarim -->
+  <div class="menu-card">
+    <div class="card-icon icon-purple">📂</div>
+    <div class="card-body">
+      <div class="card-title">Mening videolarim</div>
+      <div class="card-desc">Barcha yuklangan kontentlar</div>
+    </div>
+    <div class="badge green">24</div>
+    <div class="card-arrow">›</div>
+  </div>
+
+  <!-- Statistika -->
+  <div class="menu-card">
+    <div class="card-icon icon-blue">📊</div>
+    <div class="card-body">
+      <div class="card-title">Statistika</div>
+      <div class="card-desc">Ko'rishlar va tahlillar</div>
+    </div>
+    <div class="badge">Yangi</div>
+    <div class="card-arrow">›</div>
+  </div>
+
+  <!-- Sozlamalar -->
+  <div class="menu-card">
+    <div class="card-icon icon-orange">⚙️</div>
+    <div class="card-body">
+      <div class="card-title">Sozlamalar</div>
+      <div class="card-desc">Profil va xabarnomalar</div>
+    </div>
+    <div class="card-arrow">›</div>
+  </div>
+
+</div>
+
+<!-- RECENT VIDEOS -->
+<div class="recent-section">
+  <div class="recent-header">
+    <div class="recent-title">So'nggi videolar</div>
+    <div class="recent-link">Barchasi →</div>
+  </div>
+  <div class="recent-list">
+    <div class="recent-item">
+      <div class="recent-thumb">🎬</div>
+      <div class="recent-info">
+        <div class="recent-name">Python dars #12 — OOP</div>
+        <div class="recent-meta">2 soat oldin</div>
+      </div>
+      <div class="recent-views">👁 348</div>
+    </div>
+    <div class="recent-item">
+      <div class="recent-thumb">💻</div>
+      <div class="recent-info">
+        <div class="recent-name">JavaScript async/await</div>
+        <div class="recent-meta">Kecha</div>
+      </div>
+      <div class="recent-views">👁 512</div>
+    </div>
+    <div class="recent-item">
+      <div class="recent-thumb">🚀</div>
+      <div class="recent-info">
+        <div class="recent-name">React hooks to'liq qo'llanma</div>
+        <div class="recent-meta">3 kun oldin</div>
+      </div>
+      <div class="recent-views">👁 891</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Bosh</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">📂</div>
+    <div class="nav-label">Videolar</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Statistika</div>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-label">Sozlamalar</div>
+  </div>
+</div>
+
 </body>
 </html>
