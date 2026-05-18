@@ -2,448 +2,1211 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>My_cod1ng</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f0f13;
-    --surface: #1a1a22;
-    --surface2: #22222e;
-    --border: rgba(255,255,255,0.07);
-    --accent: #5b6af0;
-    --accent-glow: rgba(91,106,240,0.25);
-    --text: #f0eff5;
-    --muted: #6b6a80;
-    --success: #34d399;
-    --r: 14px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    max-width: 420px;
-    margin: 0 auto;
-  }
+:root {
+  --bg: #0f0f13;
+  --surface: #1a1a22;
+  --surface2: #22222e;
+  --border: rgba(255,255,255,0.07);
+  --accent: #5b6af0;
+  --accent-soft: rgba(91,106,240,0.15);
+  --text: #f0eff5;
+  --muted: #6b6a80;
+  --success: #34d399;
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --r: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  max-width: 420px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  position: relative;
+}
 
-  /* ── HEADER ── */
-  .header {
-    padding: 2rem 1.5rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .logo-wrap {
-    width: 50px;
-    height: 50px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #5b6af0, #8b5cf6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    flex-shrink: 0;
-    box-shadow: 0 0 24px rgba(91,106,240,0.35);
-  }
-  .header-text h1 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    line-height: 1.2;
-  }
-  .header-text p {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .notif-btn {
-    margin-left: auto;
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.2s;
-  }
-  .notif-btn:active { background: var(--surface2); }
+/* ── PAGE SYSTEM ── */
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+  transition: transform 0.32s cubic-bezier(.4,0,.2,1), opacity 0.28s ease;
+  will-change: transform, opacity;
+  min-height: 100vh;
+  background: var(--bg);
+}
+.page.hidden { transform: translateX(100%); opacity: 0; pointer-events: none; }
+.page.active  { transform: translateX(0);   opacity: 1; pointer-events: all; }
+.page.exit    { transform: translateX(-40%); opacity: 0; pointer-events: none; }
 
-  /* ── STATS BAR ── */
-  .stats-bar {
-    margin: 0 1.5rem 1.5rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-  }
-  .stat-item + .stat-item {
-    border-left: 1px solid var(--border);
-  }
-  .stat-val {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1;
-  }
-  .stat-val span { color: var(--accent); }
-  .stat-lbl {
-    font-size: 0.7rem;
-    color: var(--muted);
-    margin-top: 4px;
-    text-align: center;
-  }
+/* ── SCROLL STYLE ── */
+.page::-webkit-scrollbar { width: 3px; }
+.page::-webkit-scrollbar-track { background: transparent; }
+.page::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
 
-  /* ── MAIN BUTTONS ── */
-  .section-label {
-    padding: 0 1.5rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 0.75rem;
-  }
-  .menu-grid {
-    padding: 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    flex: 1;
-  }
+/* ── COMMON HEADER ── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.4rem 1.4rem 1rem;
+  position: sticky;
+  top: 0;
+  background: rgba(15,15,19,0.92);
+  backdrop-filter: blur(14px);
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.back-btn {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.back-btn:active { background: var(--surface2); }
+.top-bar h2 { font-size: 1rem; font-weight: 700; }
+.top-bar .top-right { margin-left: auto; }
 
-  /* primary card */
-  .menu-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 1rem 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    transition: background 0.18s, transform 0.15s, border-color 0.18s;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    overflow: hidden;
-  }
-  .menu-card:active { transform: scale(0.985); background: var(--surface2); }
-  .menu-card.primary {
-    background: linear-gradient(135deg, #3d4ed6, #5b6af0);
-    border-color: rgba(91,106,240,0.4);
-    box-shadow: 0 8px 24px rgba(91,106,240,0.3);
-  }
-  .menu-card.primary:active { opacity: 0.9; }
-  .card-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
-  .menu-card.primary .card-icon {
-    background: rgba(255,255,255,0.18);
-  }
-  .icon-purple { background: rgba(139,92,246,0.18); }
-  .icon-blue   { background: rgba(59,130,246,0.15); }
-  .icon-green  { background: rgba(52,211,153,0.15); }
-  .icon-orange { background: rgba(251,146,60,0.15); }
-  .card-body { flex: 1; min-width: 0; }
-  .card-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    line-height: 1.2;
-  }
-  .menu-card.primary .card-title { color: #fff; }
-  .card-desc {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 3px;
-  }
-  .menu-card.primary .card-desc { color: rgba(255,255,255,0.65); }
-  .card-arrow {
-    color: var(--muted);
-    font-size: 0.85rem;
-    flex-shrink: 0;
-  }
-  .menu-card.primary .card-arrow { color: rgba(255,255,255,0.6); }
-  .badge {
-    background: var(--accent);
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 20px;
-    margin-left: auto;
-    margin-right: 4px;
-  }
-  .badge.green { background: var(--success); color: #0a1a12; }
+/* ── HOME HEADER ── */
+.home-header {
+  padding: 1.6rem 1.4rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.logo-wrap {
+  width: 48px; height: 48px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #5b6af0, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 0 22px rgba(91,106,240,0.35);
+  flex-shrink: 0;
+}
+.header-text h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: -.3px; }
+.header-text p  { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.notif-btn {
+  margin-left: auto;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem;
+  transition: background 0.15s;
+}
+.notif-btn:active { background: var(--surface2); }
 
-  /* ── RECENT ── */
-  .recent-section {
-    padding: 1.5rem 1.5rem 0;
-  }
-  .recent-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-  }
-  .recent-title {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-  }
-  .recent-link {
-    font-size: 0.75rem;
-    color: var(--accent);
-    cursor: pointer;
-  }
-  .recent-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .recent-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.7rem 0.9rem;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .recent-item:active { background: var(--surface2); }
-  .recent-thumb {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-    background: var(--surface2);
-  }
-  .recent-info { flex: 1; min-width: 0; }
-  .recent-name {
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .recent-meta {
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .recent-views {
-    font-size: 0.75rem;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    flex-shrink: 0;
-  }
+/* ── STATS BAR ── */
+.stats-bar {
+  margin: 0 1.4rem 1.3rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1rem 1.2rem;
+  display: flex;
+  justify-content: space-around;
+}
+.stat-item { display:flex; flex-direction:column; align-items:center; flex:1; }
+.stat-item + .stat-item { border-left: 1px solid var(--border); }
+.stat-val { font-size:1.2rem; font-weight:700; line-height:1; }
+.stat-val .acc { color: var(--accent); }
+.stat-lbl { font-size:0.68rem; color:var(--muted); margin-top:4px; }
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    margin-top: auto;
-    padding: 0.85rem 1.5rem 1.5rem;
-    display: flex;
-    justify-content: space-around;
-    background: rgba(15,15,19,0.95);
-    border-top: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    bottom: 0;
-  }
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    flex: 1;
-  }
-  .nav-item:active { opacity: 0.6; }
-  .nav-icon {
-    width: 42px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    font-size: 1.15rem;
-    transition: background 0.2s;
-  }
-  .nav-item.active .nav-icon {
-    background: var(--accent-glow);
-  }
-  .nav-label {
-    font-size: 0.68rem;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  .nav-item.active .nav-label { color: var(--accent); }
+/* ── SECTION LABEL ── */
+.sec-label {
+  padding: 0 1.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: .7rem;
+}
+
+/* ── MENU CARDS ── */
+.menu-list { padding: 0 1.4rem; display:flex; flex-direction:column; gap:.6rem; }
+.menu-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: .95rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  cursor: pointer;
+  transition: background .15s, transform .12s;
+}
+.menu-card:active { transform: scale(.98); background: var(--surface2); }
+.menu-card.primary {
+  background: linear-gradient(135deg, #3d4ed6, #5b6af0);
+  border-color: rgba(91,106,240,.4);
+  box-shadow: 0 8px 22px rgba(91,106,240,.28);
+}
+.menu-card.primary:active { opacity:.9; }
+.card-icon {
+  width:40px; height:40px;
+  border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.15rem; flex-shrink:0;
+}
+.menu-card.primary .card-icon { background:rgba(255,255,255,.18); }
+.ic-purple { background:rgba(139,92,246,.18); }
+.ic-blue   { background:rgba(59,130,246,.14); }
+.ic-green  { background:rgba(52,211,153,.14); }
+.ic-orange { background:rgba(251,146,60,.14); }
+.card-body { flex:1; min-width:0; }
+.card-title { font-size:.9rem; font-weight:600; }
+.menu-card.primary .card-title { color:#fff; }
+.card-desc { font-size:.73rem; color:var(--muted); margin-top:2px; }
+.menu-card.primary .card-desc { color:rgba(255,255,255,.6); }
+.card-arrow { color:var(--muted); font-size:.85rem; flex-shrink:0; }
+.menu-card.primary .card-arrow { color:rgba(255,255,255,.55); }
+.badge {
+  background:var(--accent);
+  color:#fff;
+  font-size:.62rem;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:20px;
+  margin-right:4px;
+}
+.badge.green { background:var(--success); color:#071a0f; }
+
+/* ── RECENT ── */
+.recent-section { padding: 1.3rem 1.4rem 0; }
+.recent-hdr {
+  display:flex; align-items:center;
+  justify-content:space-between;
+  margin-bottom:.7rem;
+}
+.recent-hdr .sec-label { padding:0; margin:0; }
+.recent-link { font-size:.75rem; color:var(--accent); cursor:pointer; }
+.recent-list { display:flex; flex-direction:column; gap:.5rem; }
+.recent-item {
+  display:flex; align-items:center; gap:.75rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:.65rem .9rem;
+  cursor:pointer;
+  transition:background .15s;
+}
+.recent-item:active { background:var(--surface2); }
+.recent-thumb {
+  width:34px; height:34px;
+  border-radius:8px;
+  background:var(--surface2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.95rem; flex-shrink:0;
+}
+.recent-info { flex:1; min-width:0; }
+.recent-name { font-size:.83rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.recent-meta { font-size:.7rem; color:var(--muted); margin-top:2px; }
+.recent-views { font-size:.73rem; color:var(--muted); flex-shrink:0; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(15,15,19,.97);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  padding: .7rem 1rem 1.1rem;
+  z-index: 100;
+}
+.nav-item {
+  display:flex; flex-direction:column;
+  align-items:center; gap:3px;
+  cursor:pointer; flex:1;
+  transition:opacity .2s;
+}
+.nav-item:active { opacity:.6; }
+.nav-icon {
+  width:38px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:9px; font-size:1.1rem;
+  transition:background .2s;
+}
+.nav-item.active .nav-icon { background:var(--accent-soft); }
+.nav-label { font-size:.65rem; color:var(--muted); font-weight:500; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+/* ═══════════════════════════════
+   PAGE: VIDEO YUKLASH
+═══════════════════════════════ */
+.upload-zone {
+  margin: 1.2rem 1.4rem;
+  border: 2px dashed rgba(91,106,240,.35);
+  border-radius: var(--r);
+  padding: 2.2rem 1rem;
+  display: flex; flex-direction:column;
+  align-items:center; gap:.75rem;
+  cursor:pointer;
+  transition: border-color .2s, background .2s;
+  background: rgba(91,106,240,.04);
+}
+.upload-zone:active { border-color:var(--accent); background:var(--accent-soft); }
+.upload-icon { font-size:2.8rem; }
+.upload-zone h3 { font-size:.95rem; font-weight:600; }
+.upload-zone p { font-size:.78rem; color:var(--muted); text-align:center; line-height:1.5; }
+.upload-formats {
+  display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center;
+}
+.fmt-tag {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:2px 10px;
+  font-size:.68rem;
+  color:var(--muted);
+}
+
+.form-group { padding: 0 1.4rem; margin-bottom:1rem; }
+.form-label { font-size:.75rem; font-weight:600; color:var(--muted); margin-bottom:.4rem; display:block; text-transform:uppercase; letter-spacing:.5px; }
+.form-input, .form-textarea, .form-select {
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:.875rem;
+  padding:.75rem 1rem;
+  outline:none;
+  transition:border-color .2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color:rgba(91,106,240,.5);
+}
+.form-input::placeholder, .form-textarea::placeholder { color:var(--muted); }
+.form-textarea { resize:none; height:80px; }
+.form-select { appearance:none; }
+option { background:#1a1a22; }
+
+.toggle-row {
+  display:flex; align-items:center;
+  justify-content:space-between;
+  padding:.85rem 1rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+.toggle-info { }
+.toggle-info .t-title { font-size:.88rem; font-weight:500; }
+.toggle-info .t-sub   { font-size:.73rem; color:var(--muted); }
+.toggle {
+  width:42px; height:24px;
+  border-radius:12px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  cursor:pointer;
+  position:relative;
+  transition:background .25s;
+  flex-shrink:0;
+}
+.toggle.on { background:var(--accent); border-color:var(--accent); }
+.toggle::after {
+  content:'';
+  position:absolute;
+  width:18px; height:18px;
+  border-radius:50%;
+  background:#fff;
+  top:2px; left:2px;
+  transition:transform .25s;
+}
+.toggle.on::after { transform:translateX(18px); }
+
+.submit-btn {
+  display:block;
+  width:calc(100% - 2.8rem);
+  margin: 1.2rem 1.4rem 0;
+  background:linear-gradient(135deg,#3d4ed6,#5b6af0);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:1rem;
+  font-size:.95rem;
+  font-weight:600;
+  font-family:'Inter',sans-serif;
+  cursor:pointer;
+  transition:opacity .2s, transform .15s;
+  box-shadow:0 8px 22px rgba(91,106,240,.3);
+}
+.submit-btn:active { opacity:.9; transform:scale(.98); }
+
+/* ═══════════════════════════════
+   PAGE: VIDEOLAR
+═══════════════════════════════ */
+.filter-tabs {
+  display:flex; gap:.5rem;
+  padding: .8rem 1.4rem;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.filter-tabs::-webkit-scrollbar { display:none; }
+.ftab {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:.35rem .9rem;
+  font-size:.78rem;
+  color:var(--muted);
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .2s;
+  flex-shrink:0;
+}
+.ftab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.ftab:active { opacity:.75; }
+
+.video-list { padding: 0 1.4rem; display:flex; flex-direction:column; gap:.7rem; }
+.video-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .15s;
+}
+.video-card:active { transform:scale(.985); }
+.video-thumb {
+  width:100%; aspect-ratio:16/9;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.5rem;
+  position:relative;
+}
+.t1 { background:linear-gradient(135deg,#1a1040,#3d20a0); }
+.t2 { background:linear-gradient(135deg,#0a1a30,#1a4080); }
+.t3 { background:linear-gradient(135deg,#0a2010,#1a5020); }
+.t4 { background:linear-gradient(135deg,#2a1000,#603000); }
+.t5 { background:linear-gradient(135deg,#1a001a,#4a0060); }
+.video-duration {
+  position:absolute; bottom:8px; right:8px;
+  background:rgba(0,0,0,.75);
+  border-radius:5px;
+  padding:2px 7px;
+  font-size:.68rem;
+  font-weight:600;
+}
+.video-info { padding:.75rem .9rem; }
+.video-title { font-size:.88rem; font-weight:600; line-height:1.35; margin-bottom:.3rem; }
+.video-meta {
+  display:flex; align-items:center;
+  justify-content:space-between;
+  font-size:.73rem; color:var(--muted);
+}
+.video-meta .views { display:flex; align-items:center; gap:3px; }
+.status-badge {
+  padding:2px 8px;
+  border-radius:5px;
+  font-size:.65rem;
+  font-weight:700;
+}
+.st-pub  { background:rgba(52,211,153,.15); color:var(--success); }
+.st-priv { background:rgba(107,107,128,.15); color:var(--muted); }
+.video-actions {
+  display:flex; gap:.5rem;
+  padding:.5rem .9rem .75rem;
+  border-top:1px solid var(--border);
+}
+.va-btn {
+  flex:1;
+  background:var(--surface2);
+  border:none;
+  border-radius:8px;
+  color:var(--muted);
+  font-family:'Inter',sans-serif;
+  font-size:.75rem;
+  padding:.5rem;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex; align-items:center; justify-content:center; gap:4px;
+}
+.va-btn:active { background:var(--accent-soft); color:var(--accent); }
+.va-btn.danger:active { background:rgba(248,113,113,.1); color:var(--danger); }
+
+/* ═══════════════════════════════
+   PAGE: STATISTIKA
+═══════════════════════════════ */
+.stat-cards {
+  padding: 1rem 1.4rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.7rem;
+}
+.stat-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1rem;
+}
+.stat-card .sc-icon { font-size:1.4rem; margin-bottom:.5rem; }
+.stat-card .sc-val { font-size:1.5rem; font-weight:700; line-height:1; }
+.stat-card .sc-lbl { font-size:.72rem; color:var(--muted); margin-top:4px; }
+.stat-card .sc-change { font-size:.72rem; margin-top:.4rem; }
+.sc-up   { color:var(--success); }
+.sc-down { color:var(--danger); }
+
+.chart-block {
+  margin: 0 1.4rem 1rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1rem;
+}
+.chart-block h4 { font-size:.85rem; font-weight:600; margin-bottom:1rem; }
+.bar-chart {
+  display:flex;
+  align-items:flex-end;
+  gap:.35rem;
+  height:80px;
+}
+.bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:.3rem; }
+.bar {
+  width:100%;
+  border-radius:4px 4px 0 0;
+  background:var(--accent-soft);
+  border:1px solid rgba(91,106,240,.2);
+  transition:height .5s ease;
+  min-height:4px;
+}
+.bar.highlight { background:linear-gradient(to top,#3d4ed6,#5b6af0); border-color:var(--accent); }
+.bar-lbl { font-size:.6rem; color:var(--muted); }
+
+.top-videos-section { padding: 0 1.4rem 1rem; }
+.top-videos-section h4 { font-size:.85rem; font-weight:600; margin-bottom:.75rem; }
+.top-video-item {
+  display:flex; align-items:center; gap:.75rem;
+  padding:.65rem 0;
+  border-bottom:1px solid var(--border);
+}
+.top-video-item:last-child { border-bottom:none; }
+.rank {
+  width:24px; height:24px;
+  border-radius:7px;
+  background:var(--surface2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:.72rem;
+  font-weight:700;
+  flex-shrink:0;
+}
+.rank.gold   { background:rgba(251,191,36,.15); color:var(--warning); }
+.rank.silver { background:rgba(156,163,175,.12); color:#9ca3af; }
+.rank.bronze { background:rgba(180,120,60,.12);  color:#b47840; }
+.tv-info { flex:1; min-width:0; }
+.tv-title { font-size:.83rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tv-views { font-size:.72rem; color:var(--muted); margin-top:2px; }
+.tv-bar {
+  width:60px; height:4px;
+  background:var(--surface2);
+  border-radius:2px;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.tv-fill { height:100%; background:var(--accent); border-radius:2px; }
+
+/* ═══════════════════════════════
+   PAGE: SOZLAMALAR
+═══════════════════════════════ */
+.profile-block {
+  margin:1.2rem 1.4rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1.2rem;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+.profile-avatar {
+  width:56px; height:56px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#5b6af0,#8b5cf6);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem;
+  flex-shrink:0;
+  box-shadow:0 0 20px rgba(91,106,240,.3);
+}
+.profile-info h3 { font-size:1rem; font-weight:700; }
+.profile-info p  { font-size:.75rem; color:var(--muted); margin-top:3px; }
+.edit-btn {
+  margin-left:auto;
+  background:var(--accent-soft);
+  border:1px solid rgba(91,106,240,.25);
+  border-radius:8px;
+  color:var(--accent);
+  font-family:'Inter',sans-serif;
+  font-size:.75rem;
+  font-weight:600;
+  padding:.4rem .85rem;
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+.settings-group { padding: 0 1.4rem; margin-bottom:1rem; }
+.settings-group .sec-label { padding:0; margin-bottom:.6rem; }
+.settings-list { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.settings-item {
+  display:flex; align-items:center; gap:.85rem;
+  padding:.9rem 1rem;
+  cursor:pointer;
+  transition:background .15s;
+  border-bottom:1px solid var(--border);
+}
+.settings-item:last-child { border-bottom:none; }
+.settings-item:active { background:var(--surface2); }
+.si-icon {
+  width:34px; height:34px;
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.95rem;
+  flex-shrink:0;
+}
+.si-body { flex:1; }
+.si-title { font-size:.875rem; font-weight:500; }
+.si-sub   { font-size:.72rem; color:var(--muted); margin-top:2px; }
+.si-right { color:var(--muted); font-size:.8rem; flex-shrink:0; }
+.si-val   { font-size:.78rem; color:var(--muted); flex-shrink:0; margin-right:.3rem; }
+
+.danger-btn {
+  display:block;
+  width:calc(100% - 2.8rem);
+  margin: .5rem 1.4rem;
+  background:rgba(248,113,113,.08);
+  border:1px solid rgba(248,113,113,.2);
+  border-radius:12px;
+  color:var(--danger);
+  font-family:'Inter',sans-serif;
+  font-size:.9rem;
+  font-weight:600;
+  padding:.9rem;
+  cursor:pointer;
+  text-align:center;
+  transition:background .2s;
+}
+.danger-btn:active { background:rgba(248,113,113,.15); }
+
+/* ── UPLOAD SUCCESS TOAST ── */
+.toast {
+  position:fixed;
+  bottom:90px; left:50%;
+  transform:translateX(-50%) translateY(30px);
+  background:#1e2a1a;
+  border:1px solid rgba(52,211,153,.3);
+  border-radius:12px;
+  padding:.75rem 1.2rem;
+  display:flex; align-items:center; gap:.6rem;
+  font-size:.85rem; font-weight:500;
+  color:var(--success);
+  opacity:0;
+  transition:opacity .3s, transform .3s;
+  z-index:999;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="logo-wrap">🎬</div>
-  <div class="header-text">
-    <h1>My_cod1ng</h1>
-    <p>Video yuklash va boshqarish</p>
+<!-- ═══════ PAGE: HOME ═══════ -->
+<div class="page active" id="page-home">
+  <div class="home-header">
+    <div class="logo-wrap">🎬</div>
+    <div class="header-text">
+      <h1>My_cod1ng</h1>
+      <p>Video yuklash va boshqarish</p>
+    </div>
+    <div class="notif-btn" onclick="showToast('🔔 Bildirishnomalar yo\'q')">🔔</div>
   </div>
-  <div class="notif-btn">🔔</div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-val">24</div>
+      <div class="stat-lbl">Videolar</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val">1<span class="acc">.</span>2K</div>
+      <div class="stat-lbl">Ko'rishlar</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val">98<span class="acc">%</span></div>
+      <div class="stat-lbl">Faollik</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Asosiy</div>
+  <div class="menu-list">
+    <div class="menu-card primary" onclick="goTo('upload')">
+      <div class="card-icon">🎥</div>
+      <div class="card-body">
+        <div class="card-title">Video yuklash</div>
+        <div class="card-desc">Yangi video qo'shish</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+    <div class="menu-card" onclick="goTo('videos')">
+      <div class="card-icon ic-purple">📂</div>
+      <div class="card-body">
+        <div class="card-title">Mening videolarim</div>
+        <div class="card-desc">Barcha yuklangan kontentlar</div>
+      </div>
+      <div class="badge green">24</div>
+      <div class="card-arrow">›</div>
+    </div>
+    <div class="menu-card" onclick="goTo('stats')">
+      <div class="card-icon ic-blue">📊</div>
+      <div class="card-body">
+        <div class="card-title">Statistika</div>
+        <div class="card-desc">Ko'rishlar va tahlillar</div>
+      </div>
+      <div class="badge">Yangi</div>
+      <div class="card-arrow">›</div>
+    </div>
+    <div class="menu-card" onclick="goTo('settings')">
+      <div class="card-icon ic-orange">⚙️</div>
+      <div class="card-body">
+        <div class="card-title">Sozlamalar</div>
+        <div class="card-desc">Profil va xabarnomalar</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="recent-section">
+    <div class="recent-hdr">
+      <div class="sec-label">So'nggi videolar</div>
+      <div class="recent-link" onclick="goTo('videos')">Barchasi →</div>
+    </div>
+    <div class="recent-list">
+      <div class="recent-item" onclick="goTo('videos')">
+        <div class="recent-thumb">🐍</div>
+        <div class="recent-info">
+          <div class="recent-name">Python dars #12 — OOP</div>
+          <div class="recent-meta">2 soat oldin</div>
+        </div>
+        <div class="recent-views">👁 348</div>
+      </div>
+      <div class="recent-item" onclick="goTo('videos')">
+        <div class="recent-thumb">💛</div>
+        <div class="recent-info">
+          <div class="recent-name">JavaScript async/await</div>
+          <div class="recent-meta">Kecha</div>
+        </div>
+        <div class="recent-views">👁 512</div>
+      </div>
+      <div class="recent-item" onclick="goTo('videos')">
+        <div class="recent-thumb">⚛️</div>
+        <div class="recent-info">
+          <div class="recent-name">React hooks to'liq qo'llanma</div>
+          <div class="recent-meta">3 kun oldin</div>
+        </div>
+        <div class="recent-views">👁 891</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-val">24</div>
-    <div class="stat-lbl">Videolar</div>
+<!-- ═══════ PAGE: UPLOAD ═══════ -->
+<div class="page hidden" id="page-upload">
+  <div class="top-bar">
+    <div class="back-btn" onclick="goBack()">‹</div>
+    <h2>🎥 Video yuklash</h2>
   </div>
-  <div class="stat-item">
-    <div class="stat-val">1<span>.</span>2K</div>
-    <div class="stat-lbl">Ko'rishlar</div>
+
+  <div class="upload-zone" onclick="showToast('📁 Fayl tanlandi!')">
+    <div class="upload-icon">📤</div>
+    <h3>Videoni bu yerga tashlang</h3>
+    <p>yoki bosing va faylni tanlang</p>
+    <div class="upload-formats">
+      <span class="fmt-tag">MP4</span>
+      <span class="fmt-tag">MOV</span>
+      <span class="fmt-tag">AVI</span>
+      <span class="fmt-tag">MKV</span>
+      <span class="fmt-tag">max 2GB</span>
+    </div>
   </div>
-  <div class="stat-item">
-    <div class="stat-val">98<span>%</span></div>
-    <div class="stat-lbl">Faollik</div>
+
+  <div class="form-group">
+    <label class="form-label">Video nomi *</label>
+    <input class="form-input" type="text" placeholder="Masalan: Python dars #13">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Tavsif</label>
+    <textarea class="form-textarea" placeholder="Video haqida qisqacha..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Kategoriya</label>
+    <select class="form-select">
+      <option>🐍 Python</option>
+      <option>💛 JavaScript</option>
+      <option>⚛️ React</option>
+      <option>🐳 DevOps</option>
+      <option>📱 Mobile</option>
+      <option>🛢 Database</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="t-title">Ommaviy qilish</div>
+        <div class="t-sub">Hamma ko'ra oladi</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <div class="t-title">Izoh yozish</div>
+        <div class="t-sub">Foydalanuvchilar izoh qoldira oladi</div>
+      </div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+  </div>
+
+  <button class="submit-btn" onclick="handleUpload()">📤 Yuklash</button>
+  <div style="height:.5rem"></div>
+</div>
+
+<!-- ═══════ PAGE: VIDEOS ═══════ -->
+<div class="page hidden" id="page-videos">
+  <div class="top-bar">
+    <div class="back-btn" onclick="goBack()">‹</div>
+    <h2>📂 Videolarim</h2>
+    <div class="top-right" style="color:var(--muted);font-size:.8rem">24 ta</div>
+  </div>
+
+  <div class="filter-tabs">
+    <div class="ftab active" onclick="setTab(this)">Barchasi</div>
+    <div class="ftab" onclick="setTab(this)">Ommaviy</div>
+    <div class="ftab" onclick="setTab(this)">Yashirin</div>
+    <div class="ftab" onclick="setTab(this)">Python</div>
+    <div class="ftab" onclick="setTab(this)">JavaScript</div>
+    <div class="ftab" onclick="setTab(this)">React</div>
+  </div>
+
+  <div class="video-list">
+    <div class="video-card">
+      <div class="video-thumb t1">🐍<div class="video-duration">12:45</div></div>
+      <div class="video-info">
+        <div class="video-title">Python dars #12 — OOP va Klasslar</div>
+        <div class="video-meta">
+          <div class="views">👁 348 ko'rish</div>
+          <span class="status-badge st-pub">Ommaviy</span>
+        </div>
+      </div>
+      <div class="video-actions">
+        <button class="va-btn" onclick="showToast('✏️ Tahrirlash ochildi')">✏️ Tahrir</button>
+        <button class="va-btn" onclick="showToast('📊 Statistika ochildi')">📊 Stat</button>
+        <button class="va-btn danger" onclick="showToast('🗑 O\'chirildi')">🗑 O'chir</button>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-thumb t2">💛<div class="video-duration">18:22</div></div>
+      <div class="video-info">
+        <div class="video-title">JavaScript async/await to'liq tushuntirish</div>
+        <div class="video-meta">
+          <div class="views">👁 512 ko'rish</div>
+          <span class="status-badge st-pub">Ommaviy</span>
+        </div>
+      </div>
+      <div class="video-actions">
+        <button class="va-btn" onclick="showToast('✏️ Tahrirlash ochildi')">✏️ Tahrir</button>
+        <button class="va-btn" onclick="showToast('📊 Statistika ochildi')">📊 Stat</button>
+        <button class="va-btn danger" onclick="showToast('🗑 O\'chirildi')">🗑 O'chir</button>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-thumb t3">⚛️<div class="video-duration">24:10</div></div>
+      <div class="video-info">
+        <div class="video-title">React hooks to'liq qo'llanma</div>
+        <div class="video-meta">
+          <div class="views">👁 891 ko'rish</div>
+          <span class="status-badge st-pub">Ommaviy</span>
+        </div>
+      </div>
+      <div class="video-actions">
+        <button class="va-btn" onclick="showToast('✏️ Tahrirlash ochildi')">✏️ Tahrir</button>
+        <button class="va-btn" onclick="showToast('📊 Statistika ochildi')">📊 Stat</button>
+        <button class="va-btn danger" onclick="showToast('🗑 O\'chirildi')">🗑 O'chir</button>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-thumb t4">🐳<div class="video-duration">31:05</div></div>
+      <div class="video-info">
+        <div class="video-title">Docker va Kubernetes — amaliy dars</div>
+        <div class="video-meta">
+          <div class="views">👁 234 ko'rish</div>
+          <span class="status-badge st-priv">Yashirin</span>
+        </div>
+      </div>
+      <div class="video-actions">
+        <button class="va-btn" onclick="showToast('✏️ Tahrirlash ochildi')">✏️ Tahrir</button>
+        <button class="va-btn" onclick="showToast('📊 Statistika ochildi')">📊 Stat</button>
+        <button class="va-btn danger" onclick="showToast('🗑 O\'chirildi')">🗑 O'chir</button>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-thumb t5">🛢<div class="video-duration">22:33</div></div>
+      <div class="video-info">
+        <div class="video-title">PostgreSQL — so'rovlar optimizatsiyasi</div>
+        <div class="video-meta">
+          <div class="views">👁 176 ko'rish</div>
+          <span class="status-badge st-pub">Ommaviy</span>
+        </div>
+      </div>
+      <div class="video-actions">
+        <button class="va-btn" onclick="showToast('✏️ Tahrirlash ochildi')">✏️ Tahrir</button>
+        <button class="va-btn" onclick="showToast('📊 Statistika ochildi')">📊 Stat</button>
+        <button class="va-btn danger" onclick="showToast('🗑 O\'chirildi')">🗑 O'chir</button>
+      </div>
+    </div>
+  </div>
+  <div style="height:.5rem"></div>
+</div>
+
+<!-- ═══════ PAGE: STATS ═══════ -->
+<div class="page hidden" id="page-stats">
+  <div class="top-bar">
+    <div class="back-btn" onclick="goBack()">‹</div>
+    <h2>📊 Statistika</h2>
+    <div class="top-right" style="font-size:.75rem;color:var(--muted)">So'nggi 7 kun</div>
+  </div>
+
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="sc-icon">👁</div>
+      <div class="sc-val">1,247</div>
+      <div class="sc-lbl">Jami ko'rishlar</div>
+      <div class="sc-change sc-up">↑ +12% bu hafta</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-icon">🎬</div>
+      <div class="sc-val">24</div>
+      <div class="sc-lbl">Jami video</div>
+      <div class="sc-change sc-up">↑ +2 bu oy</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-icon">👍</div>
+      <div class="sc-val">318</div>
+      <div class="sc-lbl">Yoqtirishlar</div>
+      <div class="sc-change sc-up">↑ +8% o'sdi</div>
+    </div>
+    <div class="stat-card">
+      <div class="sc-icon">💬</div>
+      <div class="sc-val">47</div>
+      <div class="sc-lbl">Izohlar</div>
+      <div class="sc-change sc-down">↓ -3 bu hafta</div>
+    </div>
+  </div>
+
+  <div class="chart-block">
+    <h4>Ko'rishlar (oxirgi 7 kun)</h4>
+    <div class="bar-chart" id="barChart"></div>
+  </div>
+
+  <div class="top-videos-section">
+    <h4>🏆 Top videolar</h4>
+    <div>
+      <div class="top-video-item">
+        <div class="rank gold">1</div>
+        <div class="tv-info">
+          <div class="tv-title">React hooks to'liq qo'llanma</div>
+          <div class="tv-views">👁 891 ko'rish</div>
+        </div>
+        <div class="tv-bar"><div class="tv-fill" style="width:100%"></div></div>
+      </div>
+      <div class="top-video-item">
+        <div class="rank silver">2</div>
+        <div class="tv-info">
+          <div class="tv-title">JavaScript async/await</div>
+          <div class="tv-views">👁 512 ko'rish</div>
+        </div>
+        <div class="tv-bar"><div class="tv-fill" style="width:57%"></div></div>
+      </div>
+      <div class="top-video-item">
+        <div class="rank bronze">3</div>
+        <div class="tv-info">
+          <div class="tv-title">Python dars #12 — OOP</div>
+          <div class="tv-views">👁 348 ko'rish</div>
+        </div>
+        <div class="tv-bar"><div class="tv-fill" style="width:39%"></div></div>
+      </div>
+      <div class="top-video-item">
+        <div class="rank">4</div>
+        <div class="tv-info">
+          <div class="tv-title">Docker va Kubernetes</div>
+          <div class="tv-views">👁 234 ko'rish</div>
+        </div>
+        <div class="tv-bar"><div class="tv-fill" style="width:26%"></div></div>
+      </div>
+      <div class="top-video-item">
+        <div class="rank">5</div>
+        <div class="tv-info">
+          <div class="tv-title">PostgreSQL optimizatsiya</div>
+          <div class="tv-views">👁 176 ko'rish</div>
+        </div>
+        <div class="tv-bar"><div class="tv-fill" style="width:20%"></div></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- MAIN MENU -->
-<div class="section-label">Asosiy</div>
-<div class="menu-grid">
+<!-- ═══════ PAGE: SETTINGS ═══════ -->
+<div class="page hidden" id="page-settings">
+  <div class="top-bar">
+    <div class="back-btn" onclick="goBack()">‹</div>
+    <h2>⚙️ Sozlamalar</h2>
+  </div>
 
-  <!-- Video yuklash — PRIMARY -->
-  <div class="menu-card primary">
-    <div class="card-icon">🎥</div>
-    <div class="card-body">
-      <div class="card-title">Video yuklash</div>
-      <div class="card-desc">Yangi video qo'shish</div>
+  <div class="profile-block">
+    <div class="profile-avatar">👨‍💻</div>
+    <div class="profile-info">
+      <h3>My_cod1ng</h3>
+      <p>@mycod1ng · 24 video</p>
     </div>
-    <div class="card-arrow">›</div>
+    <button class="edit-btn" onclick="showToast('✏️ Profil tahrirlash ochildi')">Tahrirlash</button>
   </div>
 
-  <!-- Mening videolarim -->
-  <div class="menu-card">
-    <div class="card-icon icon-purple">📂</div>
-    <div class="card-body">
-      <div class="card-title">Mening videolarim</div>
-      <div class="card-desc">Barcha yuklangan kontentlar</div>
-    </div>
-    <div class="badge green">24</div>
-    <div class="card-arrow">›</div>
-  </div>
-
-  <!-- Statistika -->
-  <div class="menu-card">
-    <div class="card-icon icon-blue">📊</div>
-    <div class="card-body">
-      <div class="card-title">Statistika</div>
-      <div class="card-desc">Ko'rishlar va tahlillar</div>
-    </div>
-    <div class="badge">Yangi</div>
-    <div class="card-arrow">›</div>
-  </div>
-
-  <!-- Sozlamalar -->
-  <div class="menu-card">
-    <div class="card-icon icon-orange">⚙️</div>
-    <div class="card-body">
-      <div class="card-title">Sozlamalar</div>
-      <div class="card-desc">Profil va xabarnomalar</div>
-    </div>
-    <div class="card-arrow">›</div>
-  </div>
-
-</div>
-
-<!-- RECENT VIDEOS -->
-<div class="recent-section">
-  <div class="recent-header">
-    <div class="recent-title">So'nggi videolar</div>
-    <div class="recent-link">Barchasi →</div>
-  </div>
-  <div class="recent-list">
-    <div class="recent-item">
-      <div class="recent-thumb">🎬</div>
-      <div class="recent-info">
-        <div class="recent-name">Python dars #12 — OOP</div>
-        <div class="recent-meta">2 soat oldin</div>
+  <div class="settings-group">
+    <div class="sec-label">Hisob</div>
+    <div class="settings-list">
+      <div class="settings-item" onclick="showToast('👤 Profil ma\'lumotlari')">
+        <div class="si-icon ic-purple">👤</div>
+        <div class="si-body">
+          <div class="si-title">Profil ma'lumotlari</div>
+          <div class="si-sub">Ism, bio, rasm</div>
+        </div>
+        <div class="si-right">›</div>
       </div>
-      <div class="recent-views">👁 348</div>
-    </div>
-    <div class="recent-item">
-      <div class="recent-thumb">💻</div>
-      <div class="recent-info">
-        <div class="recent-name">JavaScript async/await</div>
-        <div class="recent-meta">Kecha</div>
+      <div class="settings-item" onclick="showToast('🔒 Parol o\'zgartirish')">
+        <div class="si-icon ic-blue">🔒</div>
+        <div class="si-body">
+          <div class="si-title">Xavfsizlik</div>
+          <div class="si-sub">Parol, 2FA</div>
+        </div>
+        <div class="si-right">›</div>
       </div>
-      <div class="recent-views">👁 512</div>
-    </div>
-    <div class="recent-item">
-      <div class="recent-thumb">🚀</div>
-      <div class="recent-info">
-        <div class="recent-name">React hooks to'liq qo'llanma</div>
-        <div class="recent-meta">3 kun oldin</div>
+      <div class="settings-item" onclick="showToast('🔗 Telegram ulandi')">
+        <div class="si-icon" style="background:rgba(0,136,204,.15)">📱</div>
+        <div class="si-body">
+          <div class="si-title">Telegram</div>
+          <div class="si-sub">Hisob ulash</div>
+        </div>
+        <div class="si-val" style="color:var(--success)">Ulangan</div>
+        <div class="si-right">›</div>
       </div>
-      <div class="recent-views">👁 891</div>
     </div>
   </div>
+
+  <div class="settings-group">
+    <div class="sec-label">Bildirishnomalar</div>
+    <div class="settings-list">
+      <div class="settings-item">
+        <div class="si-icon ic-orange">🔔</div>
+        <div class="si-body">
+          <div class="si-title">Yangi ko'rishlar</div>
+          <div class="si-sub">Har 100 ko'rishda</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-item">
+        <div class="si-icon ic-green">💬</div>
+        <div class="si-body">
+          <div class="si-title">Izohlar</div>
+          <div class="si-sub">Yangi izoh kelganda</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-item">
+        <div class="si-icon" style="background:rgba(251,191,36,.12)">📈</div>
+        <div class="si-body">
+          <div class="si-title">Haftalik hisobot</div>
+          <div class="si-sub">Statistika xulosasi</div>
+        </div>
+        <div class="toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <div class="sec-label">Ilova</div>
+    <div class="settings-list">
+      <div class="settings-item" onclick="showToast('🌐 Til: O\'zbek')">
+        <div class="si-icon ic-blue">🌐</div>
+        <div class="si-body">
+          <div class="si-title">Til</div>
+        </div>
+        <div class="si-val">O'zbek</div>
+        <div class="si-right">›</div>
+      </div>
+      <div class="settings-item" onclick="showToast('🎨 Mavzu: Qorong\'u')">
+        <div class="si-icon" style="background:rgba(139,92,246,.15)">🎨</div>
+        <div class="si-body">
+          <div class="si-title">Mavzu</div>
+        </div>
+        <div class="si-val">Qorong'u</div>
+        <div class="si-right">›</div>
+      </div>
+      <div class="settings-item" onclick="showToast('ℹ️ Versiya 1.0.0')">
+        <div class="si-icon ic-green">ℹ️</div>
+        <div class="si-body">
+          <div class="si-title">Versiya</div>
+        </div>
+        <div class="si-val">1.0.0</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="danger-btn" onclick="showToast('👋 Chiqildi')">🚪 Chiqish</button>
+  <div style="height:.5rem"></div>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-item active">
+  <div class="nav-item active" id="nav-home" onclick="goTo('home')">
     <div class="nav-icon">🏠</div>
     <div class="nav-label">Bosh</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" id="nav-videos" onclick="goTo('videos')">
     <div class="nav-icon">📂</div>
     <div class="nav-label">Videolar</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" id="nav-upload" onclick="goTo('upload')">
+    <div class="nav-icon">🎥</div>
+    <div class="nav-label">Yuklash</div>
+  </div>
+  <div class="nav-item" id="nav-stats" onclick="goTo('stats')">
     <div class="nav-icon">📊</div>
     <div class="nav-label">Statistika</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" id="nav-settings" onclick="goTo('settings')">
     <div class="nav-icon">⚙️</div>
     <div class="nav-label">Sozlamalar</div>
   </div>
 </div>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+let currentPage = 'home';
+const pageStack = ['home'];
+
+const navMap = { home:'nav-home', videos:'nav-videos', upload:'nav-upload', stats:'nav-stats', settings:'nav-settings' };
+
+function goTo(id) {
+  if (id === currentPage) return;
+  const from = document.getElementById('page-' + currentPage);
+  const to   = document.getElementById('page-' + id);
+  if (!to) return;
+
+  from.classList.remove('active');
+  from.classList.add('exit');
+  to.classList.remove('hidden');
+  to.classList.add('active');
+  setTimeout(() => from.classList.add('hidden'), 320);
+
+  // scroll to top
+  to.scrollTop = 0;
+
+  // nav highlight
+  Object.values(navMap).forEach(n => document.getElementById(n)?.classList.remove('active'));
+  if (navMap[id]) document.getElementById(navMap[id])?.classList.add('active');
+
+  pageStack.push(id);
+  currentPage = id;
+
+  if (id === 'stats') drawChart();
+}
+
+function goBack() {
+  pageStack.pop();
+  const prev = pageStack[pageStack.length - 1] || 'home';
+  const from = document.getElementById('page-' + currentPage);
+  const to   = document.getElementById('page-' + prev);
+
+  to.classList.remove('hidden', 'exit');
+  to.classList.add('active');
+  from.classList.remove('active');
+  setTimeout(() => from.classList.add('hidden'), 320);
+
+  Object.values(navMap).forEach(n => document.getElementById(n)?.classList.remove('active'));
+  if (navMap[prev]) document.getElementById(navMap[prev])?.classList.add('active');
+
+  currentPage = prev;
+}
+
+function setTab(el) {
+  el.closest('.filter-tabs').querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function handleUpload() {
+  showToast('✅ Video muvaffaqiyatli yuklandi!');
+  setTimeout(() => goTo('videos'), 800);
+}
+
+function drawChart() {
+  const container = document.getElementById('barChart');
+  if (!container || container.children.length > 0) return;
+  const data = [
+    { day: 'Du', val: 140, h: 45 },
+    { day: 'Se', val: 98,  h: 32 },
+    { day: 'Ch', val: 210, h: 68 },
+    { day: 'Pa', val: 175, h: 56 },
+    { day: 'Ju', val: 260, h: 80, hi: true },
+    { day: 'Sh', val: 190, h: 62 },
+    { day: 'Ya', val: 174, h: 56 },
+  ];
+  data.forEach(d => {
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    wrap.innerHTML = `
+      <div class="bar ${d.hi?'highlight':''}" style="height:${d.h}px" title="${d.val} ko'rish"></div>
+      <div class="bar-lbl">${d.day}</div>
+    `;
+    container.appendChild(wrap);
+  });
+}
+</script>
 </body>
 </html>
