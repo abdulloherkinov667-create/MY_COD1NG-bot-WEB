@@ -17,9 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app.views import error_html, home_run_page
+from user_app.views import register_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", error_html, name='error'),
+    
+    #home pageni urllari 
     path("home_run_page", home_run_page, name='home_run_page'),
+    
+    #register va login viewlari
+    path("register_page", register_page, name='register_page'), 
 ]

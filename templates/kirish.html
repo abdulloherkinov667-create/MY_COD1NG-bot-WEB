@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#050a0f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>Mycod1ng-run</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --neon: #00f5a0;
+        --neon2: #00d9f5;
+        --accent: #ff3c6f;
+        --dark: #050a0f;
+        --card: rgba(0, 245, 160, 0.05);
+        --glow: 0 0 24px rgba(0, 245, 160, 0.45);
+        --glow2: 0 0 24px rgba(0, 217, 245, 0.45);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html {
+        scroll-behavior: smooth;
+        font-size: 16px;
+      }
+      body {
+        background: var(--dark);
+        color: #e0fff5;
+        font-family: "Exo 2", sans-serif;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── SOUND TOGGLE ── */
+      #sound-btn {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 200;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(0, 245, 160, 0.1);
+        border: 1px solid rgba(0, 245, 160, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        backdrop-filter: blur(10px);
+      }
+      #sound-btn:active {
+        transform: scale(0.9);
+      }
+      #sound-btn.muted {
+        opacity: 0.4;
+      }
+
+      /* ── CANVAS BG ── */
+      #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.35;
+        pointer-events: none;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        background: linear-gradient(
+          to bottom,
+          rgba(5, 10, 15, 0.97),
+          transparent
+        );
+        backdrop-filter: blur(12px);
+      }
+      .logo {
+        font-family: "Orbitron", monospace;
+        font-size: 1.05rem;
+        font-weight: 900;
+        color: var(--neon);
+        letter-spacing: 1.5px;
+        text-shadow: var(--glow);
+      }
+      .logo span {
+        color: var(--neon2);
+      }
+      .nav-btn {
+        background: transparent;
+        border: 1px solid var(--neon);
+        color: var(--neon);
+        padding: 9px 18px;
+        border-radius: 6px;
+        font-family: "Orbitron", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        min-height: 44px;
+      }
+      .nav-btn:active {
+        background: var(--neon);
+        color: var(--dark);
+        box-shadow: var(--glow);
+      }
+
+      /* ── HERO ── */
+      #hero {
+        position: relative;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 90px 24px 80px;
+        z-index: 1;
+      }
+      .hero-badge {
+        display: inline-block;
+        background: rgba(0, 245, 160, 0.1);
+        border: 1px solid rgba(0, 245, 160, 0.3);
+        color: var(--neon);
+        font-size: 0.65rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        padding: 7px 16px;
+        border-radius: 20px;
+        margin-bottom: 28px;
+        animation: fadeDown 0.9s ease both;
+      }
+      .hero-title {
+        font-family: "Orbitron", monospace;
+        font-size: clamp(2.2rem, 11vw, 5rem);
+        font-weight: 900;
+        line-height: 1.08;
+        margin-bottom: 16px;
+        animation: fadeDown 0.9s ease 0.1s both;
+      }
+      .hero-title .line1 {
+        display: block;
+        background: linear-gradient(135deg, #fff 30%, var(--neon));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero-title .line2 {
+        display: block;
+        background: linear-gradient(135deg, var(--neon2), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .hero-sub {
+        font-size: 0.95rem;
+        color: rgba(200, 255, 240, 0.6);
+        max-width: 340px;
+        line-height: 1.75;
+        margin-bottom: 44px;
+        animation: fadeDown 0.9s ease 0.2s both;
+      }
+      .hero-cta {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+        max-width: 320px;
+        animation: fadeDown 0.9s ease 0.3s both;
+      }
+      .btn-primary {
+        position: relative;
+        background: linear-gradient(135deg, var(--neon), var(--neon2));
+        color: var(--dark);
+        border: none;
+        padding: 18px 24px;
+        border-radius: 10px;
+        font-family: "Orbitron", monospace;
+        font-size: 0.85rem;
+        font-weight: 900;
+        letter-spacing: 2px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: all 0.25s;
+        text-transform: uppercase;
+        width: 100%;
+        min-height: 56px;
+        box-shadow: 0 4px 30px rgba(0, 245, 160, 0.25);
+      }
+      .btn-primary:active {
+        transform: scale(0.97);
+        box-shadow: 0 0 40px rgba(0, 245, 160, 0.55);
+      }
+      .btn-primary .shine {
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 40%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.25);
+        transform: skewX(-20deg);
+        animation: shineSlide 3s ease-in-out infinite;
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--neon2);
+        border: 1px solid rgba(0, 217, 245, 0.5);
+        padding: 16px 24px;
+        border-radius: 10px;
+        font-family: "Orbitron", monospace;
+        font-size: 0.78rem;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: all 0.25s;
+        text-transform: uppercase;
+        width: 100%;
+        min-height: 56px;
+      }
+      .btn-secondary:active {
+        background: rgba(0, 217, 245, 0.1);
+        box-shadow: var(--glow2);
+      }
+
+      /* scroll hint */
+      .scroll-hint {
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 0.6rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        animation: floatY 2.2s ease-in-out infinite;
+      }
+      .scroll-hint .arr {
+        width: 16px;
+        height: 16px;
+        border-right: 2px solid var(--neon);
+        border-bottom: 2px solid var(--neon);
+        transform: rotate(45deg);
+        animation: arrPulse 1.5s ease-in-out infinite;
+      }
+
+      /* ── STATS ── */
+      .stats-strip {
+        position: relative;
+        z-index: 1;
+        background: rgba(0, 245, 160, 0.04);
+        border-top: 1px solid rgba(0, 245, 160, 0.13);
+        border-bottom: 1px solid rgba(0, 245, 160, 0.13);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 24px 10px;
+        border-right: 1px solid rgba(0, 245, 160, 0.1);
+        opacity: 0;
+        transform: translateY(18px);
+        transition: all 0.6s;
+      }
+      .stat-item:nth-child(2n) {
+        border-right: none;
+      }
+      .stat-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .stat-num {
+        font-family: "Orbitron", monospace;
+        font-size: clamp(1.6rem, 7vw, 2.4rem);
+        font-weight: 900;
+        color: var(--neon);
+        text-shadow: var(--glow);
+        display: block;
+      }
+      .stat-label {
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
+        color: rgba(200, 255, 240, 0.45);
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+
+      /* ── SECTIONS ── */
+      section {
+        position: relative;
+        z-index: 1;
+        padding: 72px 20px;
+      }
+      .section-tag {
+        font-size: 0.65rem;
+        letter-spacing: 4px;
+        color: var(--neon);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: block;
+      }
+      .section-title {
+        font-family: "Orbitron", monospace;
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+        font-weight: 900;
+        margin-bottom: 16px;
+        line-height: 1.2;
+      }
+      .section-desc {
+        color: rgba(200, 255, 240, 0.5);
+        font-size: 0.9rem;
+        line-height: 1.8;
+      }
+
+      /* ── HOW IT WORKS ── */
+      #how .how-header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .steps-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .step-card {
+        background: var(--card);
+        border: 1px solid rgba(0, 245, 160, 0.1);
+        border-radius: 14px;
+        padding: 26px 22px;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(32px);
+        transition: all 0.6s;
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+      }
+      .step-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .step-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(to right, var(--neon), var(--neon2));
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .step-card:active::before {
+        opacity: 1;
+      }
+      .step-left {
+        flex-shrink: 0;
+      }
+      .step-num {
+        font-family: "Orbitron", monospace;
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: rgba(0, 245, 160, 0.15);
+        line-height: 1;
+      }
+      .step-icon {
+        font-size: 1.6rem;
+        display: block;
+        margin-top: 4px;
+      }
+      .step-right {
+      }
+      .step-title {
+        font-family: "Orbitron", monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+      }
+      .step-desc {
+        font-size: 0.83rem;
+        color: rgba(200, 255, 240, 0.5);
+        line-height: 1.7;
+      }
+
+      /* ── FEATURES ── */
+      #features {
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(0, 22, 40, 0.5),
+          transparent
+        );
+      }
+      .map-mock {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 245, 160, 0.18);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        position: relative;
+        margin-bottom: 40px;
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+        transition: all 0.7s;
+      }
+      .map-mock.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      #map-canvas {
+        display: block;
+        width: 100%;
+        height: 260px;
+        background: #07111d;
+      }
+      .map-overlay {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(5, 10, 15, 0.88);
+        border: 1px solid rgba(0, 245, 160, 0.2);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-family: "Orbitron", monospace;
+        font-size: 0.6rem;
+        color: var(--neon);
+        letter-spacing: 1px;
+      }
+      .map-pulse {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.68rem;
+        color: var(--accent);
+        background: rgba(5, 10, 15, 0.8);
+        border: 1px solid rgba(255, 60, 111, 0.25);
+        border-radius: 20px;
+        padding: 6px 12px;
+      }
+      .pulse-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulseDot 1.4s ease-in-out infinite;
+      }
+      .features-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .feat-item {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: rgba(0, 245, 160, 0.03);
+        border: 1px solid rgba(0, 245, 160, 0.08);
+        border-radius: 12px;
+        padding: 16px;
+        opacity: 0;
+        transform: translateX(-24px);
+        transition: all 0.5s;
+      }
+      .feat-item.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .feat-icon-box {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+        border: 1px solid rgba(0, 245, 160, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        background: rgba(0, 245, 160, 0.07);
+      }
+      .feat-text strong {
+        display: block;
+        color: #fff;
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+      .feat-text span {
+        font-size: 0.8rem;
+        color: rgba(200, 255, 240, 0.48);
+        line-height: 1.6;
+      }
+
+      /* ── BENEFITS ── */
+      #benefits {
+        text-align: center;
+      }
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 40px;
+      }
+      .benefit-card {
+        background: rgba(0, 10, 20, 0.8);
+        border: 1px solid rgba(0, 217, 245, 0.1);
+        border-radius: 14px;
+        padding: 22px 14px;
+        text-align: center;
+        opacity: 0;
+        transform: scale(0.92);
+        transition: all 0.5s;
+      }
+      .benefit-card.visible {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .benefit-card:active {
+        border-color: rgba(0, 217, 245, 0.4);
+        box-shadow: var(--glow2);
+      }
+      .benefit-emoji {
+        font-size: 2.2rem;
+        display: block;
+        margin-bottom: 12px;
+      }
+      .benefit-title {
+        font-family: "Orbitron", monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--neon2);
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+      }
+      .benefit-desc {
+        font-size: 0.75rem;
+        color: rgba(200, 255, 240, 0.45);
+        line-height: 1.6;
+      }
+
+      /* ── CTA ── */
+      #cta {
+        text-align: center;
+        padding: 90px 24px;
+      }
+      .cta-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 245, 160, 0.09) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .cta-title {
+        font-family: "Orbitron", monospace;
+        font-size: clamp(1.7rem, 7vw, 3.5rem);
+        font-weight: 900;
+        margin-bottom: 18px;
+        background: linear-gradient(135deg, #fff, var(--neon));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .cta-sub {
+        font-size: 0.9rem;
+        color: rgba(200, 255, 240, 0.5);
+        margin-bottom: 44px;
+        line-height: 1.75;
+      }
+      .btn-launch {
+        display: inline-block;
+        position: relative;
+        background: linear-gradient(135deg, var(--neon), var(--neon2));
+        color: var(--dark);
+        border: none;
+        padding: 20px 50px;
+        border-radius: 12px;
+        font-family: "Orbitron", monospace;
+        font-size: 0.9rem;
+        font-weight: 900;
+        letter-spacing: 2px;
+        cursor: pointer;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: all 0.25s;
+        box-shadow: 0 8px 40px rgba(0, 245, 160, 0.3);
+        min-height: 60px;
+        overflow: hidden;
+      }
+      .btn-launch .shine {
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 40%;
+        height: 200%;
+        background: rgba(255, 255, 255, 0.22);
+        transform: skewX(-20deg);
+        animation: shineSlide 2.5s ease-in-out infinite;
+      }
+      .btn-launch:active {
+        transform: scale(0.97);
+        box-shadow: 0 0 50px rgba(0, 245, 160, 0.6);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 24px 20px;
+        border-top: 1px solid rgba(0, 245, 160, 0.08);
+        color: rgba(200, 255, 240, 0.22);
+        font-size: 0.72rem;
+        letter-spacing: 1.5px;
+      }
+      footer span {
+        color: var(--neon);
+      }
+
+      /* ── SOUND WAVE VISUALIZER ── */
+      #sound-viz {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        z-index: 50;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s;
+      }
+      #sound-viz.active {
+        opacity: 1;
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes floatY {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(7px);
+        }
+      }
+      @keyframes arrPulse {
+        0%,
+        100% {
+          opacity: 0.25;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      @keyframes pulseDot {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.6);
+          opacity: 0.4;
+        }
+      }
+      @keyframes shineSlide {
+        0% {
+          left: -60%;
+        }
+        60%,
+        100% {
+          left: 120%;
+        }
+      }
+      @keyframes scanLine {
+        0% {
+          top: -2px;
+        }
+        100% {
+          top: 100%;
+        }
+      }
+
+      /* SCAN LINE on hero */
+      #hero::after {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--neon),
+          transparent
+        );
+        animation: scanLine 4s linear infinite;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="bg-canvas"></canvas>
+    <canvas id="sound-viz"></canvas>
+
+    <!-- Sound toggle -->
+    <div id="sound-btn" title="Ovoz">🔊</div>
+
+    <!-- NAV -->
+    <nav>
+      <div class="logo">Mycod1ng<span>-run</span></div>
+      <button
+        class="nav-btn"
+        onclick="
+          scrollTo('#cta');
+          playClick();
+        "
+      >
+        Kirish
+      </button>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-badge">🏃 GPS · Xarita · Hudud · Raqobat</div>
+      <h1 class="hero-title">
+        <span class="line1">Yugur.</span>
+        <span class="line2">Hududingni<br />Egalla.</span>
+      </h1>
+      <p class="hero-sub">
+        O'z hududingni xaritada belgilab ol, raqiblar bilan kurash va har bir
+        qadaming real vaqtda GPS orqali ko'rinsin.
+      </p>
+      <div class="hero-cta">
+        <button
+          class="btn-primary"
+          onclick="
+            scrollTo('#cta');
+            playWhoosh();
+          "
+        >
+          <span class="shine"></span>⚡ Hoziroq Boshlash
+        </button>
+        <button
+          class="btn-secondary"
+          onclick="
+            scrollTo('#how');
+            playClick();
+          "
+        >
+          Qanday Ishlaydi?
+        </button>
+      </div>
+      <div class="scroll-hint">
+        <span>Pastga suring</span>
+        <div class="arr"></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-strip">
+      <div class="stat-item">
+        <span class="stat-num" data-target="12500">0</span
+        ><span class="stat-label">Foydalanuvchi</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="340">0</span
+        ><span class="stat-label">Shahar</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="98">0</span
+        ><span class="stat-label">% Aniqlik</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="2.4">0</span
+        ><span class="stat-label">Mln km</span>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="how">
+      <div class="how-header">
+        <span class="section-tag">Jarayon</span>
+        <h2 class="section-title">Qanday Ishlaydi?</h2>
+        <p class="section-desc">
+          To'rt oddiy qadam — va sen raqobatga tayyorsan.
+        </p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">01</div>
+            <span class="step-icon">👤</span>
+          </div>
+          <div class="step-right">
+            <div class="step-title">Akkaunt Ochish</div>
+            <p class="step-desc">
+              Bir necha soniyada ro'yxatdan o't. Ism, rasm, shahar — o'zing
+              uchun profil yarat.
+            </p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">02</div>
+            <span class="step-icon">🗺️</span>
+          </div>
+          <div class="step-right">
+            <div class="step-title">Xaritaga Chiq</div>
+            <p class="step-desc">
+              Real vaqtda GPS xarita ochiladi — mahalling, ko'chalaringni
+              ko'rasan.
+            </p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">03</div>
+            <span class="step-icon">🔵</span>
+          </div>
+          <div class="step-right">
+            <div class="step-title">Hududingni O'rab Ol</div>
+            <p class="step-desc">
+              Yugur yoki yur — GPS izingni kuzatadi. Tugatganda hudud sening
+              rangingda yonib turadi.
+            </p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-left">
+            <div class="step-num">04</div>
+            <span class="step-icon">⚔️</span>
+          </div>
+          <div class="step-right">
+            <div class="step-title">Raqiblar Bilan Kurash</div>
+            <p class="step-desc">
+              Boshqa o'yinchi hududingni aylanib olsa — u uni tortib oladi. Sen
+              qayta aylanib tiklaysan!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+      <span class="section-tag">Imkoniyatlar</span>
+      <h2 class="section-title">Real GPS.<br />Real Raqobat.</h2>
+      <p class="section-desc" style="margin-bottom: 28px">
+        Faqat yugurish emas — strategiya ham kerak.
+      </p>
+
+      <div class="map-mock">
+        <canvas id="map-canvas"></canvas>
+        <div class="map-overlay">📡 GPS FAOL · TOSHKENT</div>
+        <div class="map-pulse">
+          <div class="pulse-dot"></div>
+          <span>Raqib kirib keldi!</span>
+        </div>
+      </div>
+
+      <div class="features-list">
+        <div class="feat-item">
+          <div class="feat-icon-box">📍</div>
+          <div class="feat-text">
+            <strong>Jonli GPS Tracking</strong
+            ><span>Har qadaming real vaqtda xaritada — 98% aniqlik.</span>
+          </div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon-box">🏆</div>
+          <div class="feat-text">
+            <strong>Reyting Tizimi</strong
+            ><span
+              >Eng katta hududga ega o'yinchilar global liderboardda
+              birinchi.</span
+            >
+          </div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon-box">🔔</div>
+          <div class="feat-text">
+            <strong>Hujum Xabarnomasi</strong
+            ><span
+              >Kimdir hududingga kirganda darhol bilib qaytarish uchun harakatga
+              o'tasan.</span
+            >
+          </div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-icon-box">📊</div>
+          <div class="feat-text">
+            <strong>Yugurish Statistikasi</strong
+            ><span>Masofa, kaloriya, tezlik, vaqt — hammasi bir joyda.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section id="benefits">
+      <span class="section-tag">Nima Beradi?</span>
+      <h2 class="section-title">Sog'liq + O'yin + Jamoa</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <span class="benefit-emoji">🏃‍♂️</span>
+          <div class="benefit-title">Sog'liq</div>
+          <p class="benefit-desc">
+            Har kuni yurish uchun motivatsiya. O'yin seni harakatga undaydi.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-emoji">🧠</span>
+          <div class="benefit-title">Strategiya</div>
+          <p class="benefit-desc">
+            Qaysi yo'l yaxshi? Qoch yoki hujum qil? Fikrla!
+          </p>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-emoji">👥</span>
+          <div class="benefit-title">Jamoa</div>
+          <p class="benefit-desc">
+            Do'stlar bilan birgalikda katta hudud quring.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-emoji">🏅</span>
+          <div class="benefit-title">Yutuqlar</div>
+          <p class="benefit-desc">
+            Badge, medal va unvonlar yig'ib status ko'tar.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-emoji">📈</span>
+          <div class="benefit-title">Taraqqiyot</div>
+          <p class="benefit-desc">
+            Haftalik natijalarni kuzat. O'sishingni ko'r.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <span class="benefit-emoji">🌍</span>
+          <div class="benefit-title">Kashfiyot</div>
+          <p class="benefit-desc">
+            Shahringni yangicha ko'r — har ko'cha imkoniyat.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta">
+      <div class="cta-glow"></div>
+      <h2 class="cta-title">Hududingni Egalla!</h2>
+      <p class="cta-sub">
+        Bugun ro'yxatdan o't va birinchi hududingni boshqa hech kim olmasdan
+        avval belgila.
+      </p>
+      <a href="{% url 'register_page' %}" class="btn-launch" onclick="playLaunch()"
+        ><span class="shine"></span>🚀 Platformaga Kirish</a
+      >
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>
+        © 2025 <span>Mycod1ng-run</span> · GPS Hudud O'yini · Barcha huquqlar
+        himoyalangan
+      </p>
+    </footer>
+
+    <script>
+      // ══════════════════════════════════════════
+      //  AUDIO ENGINE  (Web Audio API — dizayner stili)
+      // ══════════════════════════════════════════
+      let audioCtx = null;
+      let soundOn = true;
+      const soundBtn = document.getElementById("sound-btn");
+
+      function getCtx() {
+        if (!audioCtx)
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        return audioCtx;
+      }
+
+      // Ambient drone — past chastotali hum
+      let droneNodes = null;
+      function startDrone() {
+        if (!soundOn || droneNodes) return;
+        const ctx = getCtx();
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc1.type = "sine";
+        osc1.frequency.value = 55;
+        osc2.type = "sine";
+        osc2.frequency.value = 82.4;
+
+        filter.type = "lowpass";
+        filter.frequency.value = 400;
+        gain.gain.value = 0;
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc1.start();
+        osc2.start();
+
+        // Slowly fade in
+        gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 3);
+
+        // LFO tremolo
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.value = 0.25;
+        lfoGain.gain.value = 0.015;
+        lfo.connect(lfoGain);
+        lfoGain.connect(gain.gain);
+        lfo.start();
+
+        droneNodes = { osc1, osc2, lfo, gain };
+      }
+
+      function stopDrone() {
+        if (!droneNodes) return;
+        const ctx = getCtx();
+        droneNodes.gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+        setTimeout(() => {
+          try {
+            droneNodes.osc1.stop();
+            droneNodes.osc2.stop();
+            droneNodes.lfo.stop();
+          } catch (e) {}
+          droneNodes = null;
+        }, 1600);
+      }
+
+      // Click sound — tik
+      function playClick() {
+        if (!soundOn) return;
+        const ctx = getCtx();
+        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.06, ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++)
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 4);
+        const src = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.value = 2000;
+        src.buffer = buf;
+        gain.gain.value = 0.18;
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        src.start();
+      }
+
+      // Whoosh — sou kabi ovoz
+      function playWhoosh() {
+        if (!soundOn) return;
+        const ctx = getCtx();
+        const len = ctx.sampleRate * 0.35;
+        const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++)
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.5) * 0.5;
+        const src = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 1200;
+        filter.Q.value = 1.5;
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        src.buffer = buf;
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        src.start();
+
+        // + short neon zing
+        const osc = ctx.createOscillator();
+        const og = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.25);
+        og.gain.setValueAtTime(0.12, ctx.currentTime);
+        og.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        osc.connect(og);
+        og.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+      }
+
+      // Launch — elektron lift ovozi
+      function playLaunch() {
+        if (!soundOn) return;
+        const ctx = getCtx();
+        // Rising sweep
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const dist = ctx.createWaveShaper();
+        function makeDistCurve(amount) {
+          const k = amount,
+            n = 256,
+            curve = new Float32Array(n);
+          for (let i = 0; i < n; i++) {
+            const x = (i * 2) / n - 1;
+            curve[i] = ((Math.PI + k) * x) / (Math.PI + k * Math.abs(x));
+          }
+          return curve;
+        }
+        dist.curve = makeDistCurve(30);
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(80, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.001, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
+        osc.connect(dist);
+        dist.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.7);
+
+        // Chime top note
+        setTimeout(() => {
+          const o2 = ctx.createOscillator();
+          const g2 = ctx.createGain();
+          o2.type = "sine";
+          o2.frequency.value = 1760;
+          g2.gain.setValueAtTime(0.18, ctx.currentTime);
+          g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+          o2.connect(g2);
+          g2.connect(ctx.destination);
+          o2.start();
+          o2.stop(ctx.currentTime + 0.65);
+        }, 300);
+
+        playWhoosh();
+      }
+
+      // Scroll step sound
+      function playStep() {
+        if (!soundOn) return;
+        const ctx = getCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = 440 + Math.random() * 200;
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.13);
+      }
+
+      // Sound toggle
+      soundBtn.addEventListener("click", () => {
+        soundOn = !soundOn;
+        soundBtn.textContent = soundOn ? "🔊" : "🔇";
+        soundBtn.classList.toggle("muted", !soundOn);
+        if (soundOn) {
+          startDrone();
+        } else {
+          stopDrone();
+        }
+        playClick();
+      });
+
+      // Start drone on first touch/click anywhere
+      function initAudio() {
+        startDrone();
+        document.removeEventListener("touchstart", initAudio);
+        document.removeEventListener("click", initAudio);
+      }
+      document.addEventListener("touchstart", initAudio, { once: true });
+      document.addEventListener("click", initAudio, { once: true });
+
+      // ══════════════════════════════════════════
+      //  SOUND VISUALIZER (bottom bar)
+      // ══════════════════════════════════════════
+      const vizCanvas = document.getElementById("sound-viz");
+      const vizCtx = vizCanvas.getContext("2d");
+      let analyser = null,
+        dataArr = null;
+
+      function setupAnalyser() {
+        if (analyser || !audioCtx) return;
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        dataArr = new Uint8Array(analyser.frequencyBinCount);
+        // Route master output through analyser just for visualization
+        audioCtx.destination.channelCount = 2;
+      }
+
+      function drawViz() {
+        vizCanvas.width = window.innerWidth;
+        vizCanvas.height = 50;
+        requestAnimationFrame(drawViz);
+        if (!analyser || !soundOn) {
+          vizCtx.clearRect(0, 0, vizCanvas.width, 50);
+          return;
+        }
+        analyser.getByteFrequencyData(dataArr);
+        vizCtx.clearRect(0, 0, vizCanvas.width, 50);
+        const bars = dataArr.length;
+        const bw = vizCanvas.width / bars;
+        for (let i = 0; i < bars; i++) {
+          const v = dataArr[i] / 255;
+          const h = v * 48;
+          const hue = 140 + i * 2;
+          vizCtx.fillStyle = `hsla(${hue},100%,60%,${0.5 + v * 0.5})`;
+          vizCtx.fillRect(i * bw, 50 - h, bw - 1, h);
+        }
+      }
+      drawViz();
+
+      // ══════════════════════════════════════════
+      //  BACKGROUND PARTICLES
+      // ══════════════════════════════════════════
+      const bgCanvas = document.getElementById("bg-canvas");
+      const bgCtx = bgCanvas.getContext("2d");
+      let W,
+        H,
+        pts = [];
+
+      function resizeBg() {
+        W = bgCanvas.width = window.innerWidth;
+        H = bgCanvas.height = window.innerHeight;
+      }
+      resizeBg();
+      window.addEventListener("resize", resizeBg);
+
+      class Pt {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.x = Math.random() * W;
+          this.y = Math.random() * H;
+          this.r = Math.random() * 1.4 + 0.3;
+          this.vx = (Math.random() - 0.5) * 0.35;
+          this.vy = (Math.random() - 0.5) * 0.35;
+          this.a = Math.random() * 0.5 + 0.1;
+          this.c = Math.random() > 0.5 ? "0,245,160" : "0,217,245";
+        }
+        tick() {
+          this.x += this.vx;
+          this.y += this.vy;
+          if (this.x < 0 || this.x > W || this.y < 0 || this.y > H)
+            this.reset();
+        }
+        draw() {
+          bgCtx.beginPath();
+          bgCtx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          bgCtx.fillStyle = `rgba(${this.c},${this.a})`;
+          bgCtx.fill();
+        }
+      }
+      // Fewer particles on mobile for perf
+      const count = window.innerWidth < 480 ? 60 : 100;
+      for (let i = 0; i < count; i++) pts.push(new Pt());
+
+      function animBg() {
+        bgCtx.clearRect(0, 0, W, H);
+        pts.forEach((p) => {
+          p.tick();
+          p.draw();
+        });
+        // connections
+        for (let i = 0; i < pts.length; i++) {
+          for (let j = i + 1; j < pts.length; j++) {
+            const dx = pts[i].x - pts[j].x,
+              dy = pts[i].y - pts[j].y,
+              d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 90) {
+              bgCtx.beginPath();
+              bgCtx.moveTo(pts[i].x, pts[i].y);
+              bgCtx.lineTo(pts[j].x, pts[j].y);
+              bgCtx.strokeStyle = `rgba(0,245,160,${0.07 * (1 - d / 90)})`;
+              bgCtx.lineWidth = 0.5;
+              bgCtx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animBg);
+      }
+      animBg();
+
+      // ══════════════════════════════════════════
+      //  MAP CANVAS
+      // ══════════════════════════════════════════
+      const mapCanvas = document.getElementById("map-canvas");
+      const mCtx = mapCanvas.getContext("2d");
+      let mf = 0;
+
+      function resizeMap() {
+        mapCanvas.width = mapCanvas.offsetWidth;
+        mapCanvas.height = mapCanvas.offsetHeight;
+      }
+      resizeMap();
+
+      function drawMap() {
+        const w = mapCanvas.width,
+          h = mapCanvas.height;
+        if (!w || !h) {
+          requestAnimationFrame(drawMap);
+          return;
+        }
+        mCtx.clearRect(0, 0, w, h);
+        // grid
+        mCtx.strokeStyle = "rgba(0,245,160,0.06)";
+        mCtx.lineWidth = 1;
+        for (let x = 0; x < w; x += 36) {
+          mCtx.beginPath();
+          mCtx.moveTo(x, 0);
+          mCtx.lineTo(x, h);
+          mCtx.stroke();
+        }
+        for (let y = 0; y < h; y += 36) {
+          mCtx.beginPath();
+          mCtx.moveTo(0, y);
+          mCtx.lineTo(w, y);
+          mCtx.stroke();
+        }
+        // streets
+        mCtx.strokeStyle = "rgba(0,245,160,0.13)";
+        mCtx.lineWidth = 2;
+        [
+          [0.1 * w, 0.3 * h, 0.9 * w, 0.3 * h],
+          [0.1 * w, 0.65 * h, 0.9 * w, 0.65 * h],
+          [0.3 * w, 0, 0.3 * w, h],
+          [0.68 * w, 0, 0.68 * w, h],
+        ].forEach(([x1, y1, x2, y2]) => {
+          mCtx.beginPath();
+          mCtx.moveTo(x1, y1);
+          mCtx.lineTo(x2, y2);
+          mCtx.stroke();
+        });
+        // user territory
+        const cx = 0.4 * w,
+          cy = 0.47 * h;
+        const prog = (Math.sin(mf * 0.015) + 1) / 2;
+        const pts2 = [
+          [cx - 50, cy - 42],
+          [cx + 18, cy - 58],
+          [cx + 65, cy - 16],
+          [cx + 58, cy + 42],
+          [cx - 8, cy + 58],
+          [cx - 66, cy + 16],
+        ];
+        mCtx.beginPath();
+        mCtx.moveTo(pts2[0][0], pts2[0][1]);
+        pts2.forEach((p) => mCtx.lineTo(p[0], p[1]));
+        mCtx.closePath();
+        mCtx.fillStyle = `rgba(0,245,160,${0.07 + prog * 0.05})`;
+        mCtx.fill();
+        mCtx.strokeStyle = `rgba(0,245,160,${0.4 + prog * 0.3})`;
+        mCtx.lineWidth = 2;
+        mCtx.stroke();
+        // enemy territory
+        const ex = 0.68 * w,
+          ey = 0.33 * h;
+        mCtx.beginPath();
+        mCtx.moveTo(ex - 34, ey - 26);
+        mCtx.lineTo(ex + 34, ey - 18);
+        mCtx.lineTo(ex + 42, ey + 34);
+        mCtx.lineTo(ex - 26, ey + 42);
+        mCtx.closePath();
+        mCtx.fillStyle = "rgba(255,60,111,0.08)";
+        mCtx.fill();
+        mCtx.strokeStyle = "rgba(255,60,111,0.4)";
+        mCtx.lineWidth = 2;
+        mCtx.stroke();
+        // user dot
+        const gx = cx + Math.cos(mf * 0.022) * 12,
+          gy = cy + Math.sin(mf * 0.022) * 9;
+        const pulse2 = (Math.sin(mf * 0.06) + 1) / 2;
+        mCtx.beginPath();
+        mCtx.arc(gx, gy, 12 + pulse2 * 9, 0, Math.PI * 2);
+        mCtx.fillStyle = `rgba(0,245,160,${0.04 + pulse2 * 0.09})`;
+        mCtx.fill();
+        mCtx.beginPath();
+        mCtx.arc(gx, gy, 5, 0, Math.PI * 2);
+        mCtx.fillStyle = "#00f5a0";
+        mCtx.fill();
+        // enemy dot
+        const epx = ex + Math.cos(mf * 0.027) * 7,
+          epy = ey + Math.sin(mf * 0.027) * 5;
+        mCtx.beginPath();
+        mCtx.arc(epx, epy, 4, 0, Math.PI * 2);
+        mCtx.fillStyle = "#ff3c6f";
+        mCtx.fill();
+        const ep2 = (Math.sin(mf * 0.08) + 1) / 2;
+        mCtx.beginPath();
+        mCtx.arc(epx, epy, 8 + ep2 * 6, 0, Math.PI * 2);
+        mCtx.fillStyle = `rgba(255,60,111,${0.03 + ep2 * 0.07})`;
+        mCtx.fill();
+
+        mf++;
+        requestAnimationFrame(drawMap);
+      }
+      drawMap();
+
+      // ══════════════════════════════════════════
+      //  SCROLL → IntersectionObserver
+      // ══════════════════════════════════════════
+      let lastScrollY = 0;
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("visible");
+              playStep();
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+
+      document
+        .querySelectorAll(
+          ".step-card,.stat-item,.feat-item,.benefit-card,.map-mock",
+        )
+        .forEach((el) => io.observe(el));
+
+      // Stagger delays
+      document
+        .querySelectorAll(".step-card")
+        .forEach((c, i) => (c.style.transitionDelay = i * 0.1 + "s"));
+      document
+        .querySelectorAll(".benefit-card")
+        .forEach((c, i) => (c.style.transitionDelay = i * 0.07 + "s"));
+      document
+        .querySelectorAll(".feat-item")
+        .forEach((c, i) => (c.style.transitionDelay = i * 0.09 + "s"));
+      document
+        .querySelectorAll(".stat-item")
+        .forEach((c, i) => (c.style.transitionDelay = i * 0.08 + "s"));
+
+      // ══════════════════════════════════════════
+      //  COUNTER ANIMATION
+      // ══════════════════════════════════════════
+      function animCounter(el) {
+        const target = parseFloat(el.getAttribute("data-target"));
+        const isFloat = target % 1 !== 0;
+        const dur = 1800,
+          start = performance.now();
+        function upd(now) {
+          const t = Math.min((now - start) / dur, 1);
+          const e = 1 - Math.pow(1 - t, 3);
+          el.textContent = isFloat
+            ? (target * e).toFixed(1)
+            : Math.floor(target * e).toLocaleString();
+          if (t < 1) requestAnimationFrame(upd);
+        }
+        requestAnimationFrame(upd);
+      }
+      const cio = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              const n = e.target.querySelector(".stat-num");
+              if (n && !n.classList.contains("counted")) {
+                n.classList.add("counted");
+                animCounter(n);
+              }
+            }
+          });
+        },
+        { threshold: 0.3 },
+      );
+      document.querySelectorAll(".stat-item").forEach((el) => cio.observe(el));
+
+      // ══════════════════════════════════════════
+      //  SCROLL HELPER + PARALLAX
+      // ══════════════════════════════════════════
+      function scrollTo(sel) {
+        const el = document.querySelector(sel);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          const sy = window.scrollY;
+          // Subtle parallax hero only
+          const hero = document.getElementById("hero");
+          if (hero && sy < window.innerHeight) {
+            hero.style.transform = `translateY(${sy * 0.2}px)`;
+            hero.style.opacity = 1 - sy / 550;
+          }
+          lastScrollY = sy;
+        },
+        { passive: true },
+      );
+
+      // ══════════════════════════════════════════
+      //  TOUCH RIPPLE
+      // ══════════════════════════════════════════
+      document
+        .querySelectorAll(".btn-primary,.btn-secondary,.btn-launch,.nav-btn")
+        .forEach((btn) => {
+          btn.addEventListener(
+            "touchstart",
+            (e) => {
+              const rect = btn.getBoundingClientRect();
+              const t = e.touches[0];
+              const ripple = document.createElement("span");
+              ripple.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,0.25);
+      width:0;height:0;
+      left:${t.clientX - rect.left}px;top:${t.clientY - rect.top}px;
+      transform:translate(-50%,-50%);
+      animation:rippleAnim .5s ease-out forwards;pointer-events:none;`;
+              btn.style.position = "relative";
+              btn.style.overflow = "hidden";
+              btn.appendChild(ripple);
+              setTimeout(() => ripple.remove(), 600);
+            },
+            { passive: true },
+          );
+        });
+
+      // Add ripple keyframe
+      const s = document.createElement("style");
+      s.textContent =
+        "@keyframes rippleAnim{to{width:160px;height:160px;opacity:0;}}";
+      document.head.appendChild(s);
+
+      // Fix map canvas on resize
+      window.addEventListener(
+        "resize",
+        () => {
+          resizeBg();
+          resizeMap();
+        },
+        { passive: true },
+      );
+    </script>
+  </body>
+</html>
