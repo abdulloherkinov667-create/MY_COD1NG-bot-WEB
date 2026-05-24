@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mycoding_run - Bosh Sahifa</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --danger: #ff4757;
+            --bg-dark: #0a0f1d;
+            --glass: rgba(15, 22, 42, 0.75);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* XARITA JOYLASHUVI */
+        #map {
+            flex: 1;
+            width: 100%;
+            z-index: 1;
+        }
+
+        /* TEPADAGI PROFIL VA STATISTIKA PANELI */
+        .top-bar {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 12px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid var(--primary);
+        }
+
+        .stats-mini {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .stat-item span:first-child {
+            color: #8892b0;
+        }
+
+        .stat-item span:last-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* JONLI BILDIRISHNOMALAR (URUSH VA XAVF LENTASI) */
+        .live-alerts {
+            position: absolute;
+            top: 90px;
+            left: 15px;
+            right: 15px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .alert-toast {
+            background: rgba(255, 71, 87, 0.95);
+            border-radius: 12px;
+            padding: 10px 15px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* ASOSIY YUGURISH TUGMASI (START / STOP) */
+        .action-container {
+            position: absolute;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        .start-btn {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .start-btn:active {
+            transform: scale(0.9);
+        }
+
+        .start-btn i {
+            font-size: 1.3rem;
+        }
+
+        /* PASSTAGI NAVIGATSIYA MENU (BOTTOM NAV) */
+        .bottom-nav {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            height: 70px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #8892b0;
+            text-decoration: none;
+            font-size: 0.75rem;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+        }
+
+        .nav-placeholder {
+            width: 60px; /* O'rtadagi katta tugma uchun joy ochish */
+            visibility: hidden;
+        }
+
+        /* Kirish animatsiyasi */
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="user-info">
+            <div class="avatar">M</div>
+            <div>
+                <h4 style="font-size: 0.9rem; font-weight: 600;">Runner_01</h4>
+                <p style="font-size: 0.7rem; color: #8892b0;">Daraja: Hudud Himoyachisi</p>
+            </div>
+        </div>
+        <div class="stats-mini">
+            <div class="stat-item">
+                <span>Mening hududim</span>
+                <span>2.4 km²</span>
+            </div>
+            <div class="stat-item">
+                <span>Reyting</span>
+                <span>#7</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="live-alerts">
+        <div class="alert-toast">
+            <i class="fa-solid fa-circle-exclamation animate-flicker"></i>
+            <span><b>@shaxzod_99</b> sizning hududingizni o‘rab olmoqda!</span>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="action-container">
+        <button class="start-btn" id="startBtn">
+            <i class="fa-solid fa-person-running"></i>
+            <span style="font-size: 0.7rem; letter-spacing: 0.5px;">START</span>
+        </button>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>Xarita</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-ranking-star"></i>
+            <span>Reyting</span>
+        </a>
+        
+        <div class="nav-placeholder"></div>
+        
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Klanlar</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-circle-user"></i>
+            <span>Profil</span>
+        </a>
+    </nav>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Xaritani sozlash (Toshkent markazi koordinatasi bo'yicha)
+        // Mobil telefonda qulay bo'lishi uchun standart kattalashtirish tugmalari o'chirilgan
+        const map = L.map('map', {
+            zoomControl: false 
+        }).setView([41.311081, 69.240562], 14);
+
+        // Xaritaga zamonaviy to'q rangli (Dark Mode) dizayn berish
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: 'Mycoding_run'
+        }).addTo(map);
+
+        // NAMUNA HUDUD 1: Foydalanuvchining o'z hududi (Havorang aylana)
+        const myZone = L.circle([41.311, 69.240], {
+            color: '#00f2fe',
+            fillColor: '#00f2fe',
+            fillOpacity: 0.2,
+            radius: 350
+        }).addTo(map);
+
+        // NAMUNA HUDUD 2: Boshqa foydalanuvchi tortib olgan hudud (Qizil aylana)
+        const rivalZone = L.circle([41.316, 69.249], {
+            color: '#ff4757',
+            fillColor: '#ff4757',
+            fillOpacity: 0.15,
+            radius: 400
+        }).addTo(map);
+
+
+        // START / STOP TUGMASINING ISHLASH MEXANIZMI (SIMULYATSIYA)
+        const startBtn = document.getElementById('startBtn');
+        let runningMode = false;
+
+        startBtn.addEventListener('click', () => {
+            runningMode = !runningMode;
+            
+            if (runningMode) {
+                // Yugurish boshlangandagi holat (Tugma qizil rangga kiradi)
+                startBtn.style.background = 'linear-gradient(45deg, #ff4757, #ff6b81)';
+                startBtn.style.boxShadow = '0 0 25px rgba(255, 71, 87, 0.6)';
+                startBtn.innerHTML = '<i class="fa-solid fa-stop"></i><span style="font-size: 0.7rem;">STOP</span>';
+                
+                // Bu yerga kelajakda real GPS kuzatish kodlari yoziladi
+                console.log("GPS kuzatuv yoqildi. Yo'nalish chizilmoqda...");
+            } else {
+                // Yugurish to'xtatilgandagi holat (Tugma qayta havorang bo'ladi)
+                startBtn.style.background = 'linear-gradient(45deg, #4facfe, #00f2fe)';
+                startBtn.style.boxShadow = '0 0 25px rgba(0, 242, 254, 0.5)';
+                startBtn.innerHTML = '<i class="fa-solid fa-person-running"></i><span style="font-size: 0.7rem;">START</span>';
+                
+                alert("Yugurish yakunlandi! Bosib o'tilgan koordinatalar tekshirilmoqda va hududingiz yangilanmoqda.");
+            }
+        });
+    </script>
+</body>
+</html>
