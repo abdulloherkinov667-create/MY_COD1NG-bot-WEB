@@ -1,15 +1,19 @@
 import os
 from pathlib import Path
+import dj_database_url  # ⚠️ Muhim: requirements.txt ichida dj-database-url bo'lishi shart!
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-placeholder')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get(
+# ✅ Vaqtincha True qilamiz, muammo to'liq tuzalgach Railway paneldan DEBUG=False qilsa bo'ladi
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+# ✅ Bo'shliqlarni (probellarni) avtomatik tozalaydigan xavfsiz ALLOWED_HOSTS
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
     'ALLOWED_HOSTS',
     'localhost,127.0.0.1,.railway.app,.up.railway.app'
-).split(',')
+).split(',')]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    #my_apps
+    # my_apps
     'user_app',
     'app',
 ]
@@ -28,7 +32,7 @@ AUTH_USER_MODEL = 'user_app.Users'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static fayllar uchun
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,9 +60,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Boshliq.wsgi.application'
 
-# ✅ Railway PostgreSQL (DATABASE_URL bo'lsa ishlatadi, bo'lmasa SQLite)
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
+# ✅ TO'G'RILANDI: Railway PostgreSQL bazasi bo'lsa unga ulanadi, bo'lmasa SQLite ishlaydi
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -72,7 +80,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Static fayllar (faqat bir marta)
+# ✅ Static fayllar sozlamalari
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -85,8 +93,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://web.telegram.org',
     'https://t.me',
 ]
-
-
 
 X_FRAME_OPTIONS = 'ALLOWALL'
 SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
