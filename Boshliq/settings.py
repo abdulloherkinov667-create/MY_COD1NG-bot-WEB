@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import dj_database_url  # ⚠️ Muhim: requirements.txt ichida dj-database-url bo'lishi shart!
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -62,10 +61,10 @@ WSGI_APPLICATION = 'Boshliq.wsgi.application'
 
 # ✅ TO'G'RILANDI: Railway PostgreSQL bazasi bo'lsa unga ulanadi, bo'lmasa SQLite ishlaydi
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
