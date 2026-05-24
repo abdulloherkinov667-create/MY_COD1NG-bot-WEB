@@ -1,14 +1,15 @@
 import os
 from pathlib import Path
-import dj_database_url  # ⚠️ Buni ishlatish uchun requirements.txt ichida dj-database-url bo'lishi kerak
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-placeholder')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ✅ Bo'shliqlarsiz, toza ro'yxat ko'rinishida yozamiz
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app', '.up.railway.app']
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1,.railway.app,.up.railway.app'
+).split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -18,12 +19,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # my_apps
+    #my_apps
     'user_app',
     'app',
 ]
 
-# ⚠️ Agar modelingiz nomi "User" bo'lsa, oxiridagi 's' harfini o'chirib tashlang!
 AUTH_USER_MODEL = 'user_app.Users'
 
 MIDDLEWARE = [
@@ -56,15 +56,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Boshliq.wsgi.application'
 
-
-# ✅ MA'LUMOTLAR BAZASI SOZLAMASI (TUZATILDI)
-# Railway PostgreSQL bo'lsa ulanadi, bo'lmasa SQLite-dan foydalanadi
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
-    )
-}
+# ✅ Railway PostgreSQL (DATABASE_URL bo'lsa ishlatadi, bo'lmasa SQLite)
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -79,6 +72,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# ✅ Static fayllar (faqat bir marta)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -91,6 +85,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://web.telegram.org',
     'https://t.me',
 ]
+
+
 
 X_FRAME_OPTIONS = 'ALLOWALL'
 SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
