@@ -283,6 +283,115 @@
     @keyframes scanLine{0%{top:-2px;}100%{top:100%;}}
     @keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.18);}}
     @keyframes rippleAnim{to{width:180px;height:180px;opacity:0;}}
+
+    /* ══════════════════════════════
+       MOBILE  ≤ 480px
+    ══════════════════════════════ */
+    @media(max-width:480px){
+      html{font-size:15px;}
+      /* NAV */
+      nav{padding:11px 14px;}
+      .logo{font-size:.88rem;letter-spacing:1px;}
+      .nav-links .nav-link{display:none;}
+      .nav-btn{padding:8px 13px;font-size:.52rem;letter-spacing:1.2px;min-height:36px;}
+      /* SCENE */
+      .scene{padding:84px 14px 60px;}
+      #s-stats{padding:36px 14px;min-height:auto;}
+      #s-about,#s-how,#s-features,#s-tech,#s-benefits{padding:56px 14px;}
+      #s-cta{padding:72px 14px;min-height:auto;}
+      /* HERO */
+      .hero-badge{font-size:.52rem;letter-spacing:1.5px;padding:6px 12px;margin-bottom:18px;}
+      .hero-title{font-size:clamp(1.9rem,13vw,2.8rem);margin-bottom:12px;}
+      .hero-sub{font-size:.83rem;line-height:1.72;margin-bottom:32px;max-width:100%;}
+      .hero-cta{max-width:100%;}
+      .btn-primary{font-size:.72rem;padding:15px 16px;min-height:50px;letter-spacing:1.2px;}
+      .btn-secondary{font-size:.66rem;padding:13px 16px;min-height:48px;letter-spacing:1.2px;}
+      .scroll-hint{font-size:.5rem;bottom:18px;}
+      /* STATS */
+      .stats-grid{gap:9px;}
+      .stat-card{padding:18px 8px;border-radius:12px;}
+      .stat-label{font-size:.55rem;}
+      /* ABOUT */
+      .about-wrap{text-align:center;}
+      .about-cards{grid-template-columns:1fr;gap:9px;}
+      .about-card{padding:14px 12px;}
+      .ac-desc{font-size:.73rem;}
+      /* SECTION */
+      .section-title{font-size:clamp(1.25rem,7vw,1.75rem);}
+      .section-desc{font-size:.8rem;}
+      /* STEPS */
+      .step-card{padding:14px 12px;gap:10px;}
+      .step-num{font-size:1.3rem;}
+      .step-icon{font-size:1.2rem;}
+      .step-title{font-size:.74rem;}
+      .step-desc{font-size:.74rem;}
+      /* MAP */
+      #map-canvas{height:180px;}
+      .map-overlay{font-size:.5rem;padding:5px 9px;}
+      .map-pulse{font-size:.58rem;padding:4px 9px;gap:5px;}
+      /* FEATURES */
+      .feat-item{padding:12px 11px;gap:10px;}
+      .feat-icon-box{width:36px;height:36px;font-size:.95rem;border-radius:8px;}
+      .feat-text strong{font-size:.8rem;}
+      .feat-text span{font-size:.72rem;}
+      /* TECH */
+      .tech-grid{gap:9px;}
+      .tech-card{padding:14px 9px;border-radius:10px;}
+      .tech-icon{font-size:1.6rem;margin-bottom:8px;}
+      .tech-name{font-size:.62rem;}
+      .tech-desc{font-size:.66rem;}
+      /* BENEFITS */
+      .benefits-grid{gap:9px;}
+      .benefit-card{padding:16px 9px;border-radius:11px;}
+      .benefit-emoji{font-size:1.8rem;margin-bottom:10px;}
+      .benefit-title{font-size:.62rem;}
+      .benefit-desc{font-size:.68rem;}
+      /* CTA */
+      .cta-glow{width:280px;height:280px;}
+      .cta-title{font-size:clamp(1.5rem,9vw,2.2rem);}
+      .cta-sub{font-size:.8rem;margin-bottom:28px;}
+      .cta-btns{max-width:100%;}
+      .btn-launch{font-size:.74rem;padding:16px 24px;letter-spacing:1.2px;min-height:54px;}
+      /* FOOTER */
+      .footer-links{flex-direction:column;align-items:center;gap:10px;margin-bottom:12px;}
+      .footer-link{font-size:.65rem;}
+      footer{padding:20px 14px;font-size:.62rem;}
+      /* 3D tilt off — mobile'da ishlash yaxshiligi */
+      .feat-3d-box{transform:none!important;}
+      .feat-3d-box.vis{opacity:1;transform:none!important;}
+    }
+
+    /* ══════════════════════════════
+       TABLET  481px – 768px
+    ══════════════════════════════ */
+    @media(min-width:481px) and (max-width:768px){
+      nav{padding:12px 18px;}
+      .nav-links .nav-link{display:none;}
+      .nav-btn{padding:8px 16px;font-size:.58rem;}
+      .scene{padding:96px 18px 70px;}
+      #s-about,#s-how,#s-features,#s-tech,#s-benefits{padding:68px 18px;}
+      .hero-sub{max-width:88%;}
+      .hero-cta{max-width:340px;}
+      .about-cards{grid-template-columns:1fr 1fr;}
+      .tech-grid{grid-template-columns:1fr 1fr;}
+      #map-canvas{height:210px;}
+    }
+
+    /* ══════════════════════════════
+       TOUCH aktiv holatlari
+    ══════════════════════════════ */
+    @media(hover:none){
+      .btn-primary:active{transform:scale(.97);box-shadow:0 0 36px rgba(0,245,160,.5);}
+      .btn-secondary:active{background:rgba(0,217,245,.08);}
+      .btn-launch:active{transform:scale(.97);}
+      .nav-btn:active{background:var(--neon);color:var(--dark);}
+      .stat-card:active{border-color:rgba(0,245,160,.38);}
+      .benefit-card:active{border-color:rgba(0,217,245,.32);}
+      .about-card:active{background:rgba(0,245,160,.06);}
+      .feat-item:active{border-color:rgba(0,245,160,.22);}
+      .step-card:active::before{opacity:1;}
+      .tech-card:active{border-color:rgba(0,217,245,.35);}
+    }
   </style>
 </head>
 <body>
