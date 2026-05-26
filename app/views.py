@@ -4,4 +4,4 @@ def error_html(request):
     return render(request, 'kirish.html')
 
 def home_run_page(request):
-    return render(request, 'kirish.html')
+    return render(request, 'home_page.html')
