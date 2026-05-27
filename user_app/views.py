@@ -17,7 +17,7 @@ def register_page(request):
                 phone_number=phone_number,
                 password=password
             )
-            return redirect('login_page')
+            return redirect('home_run_page')
     return render(request, 'User/register.html')
 
 
