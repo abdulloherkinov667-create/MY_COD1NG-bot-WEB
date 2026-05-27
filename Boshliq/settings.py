@@ -1,14 +1,9 @@
 import os
 from pathlib import Path
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-placeholder')
-
-# ✅ Vaqtincha True qilamiz, muammo to'liq tuzalgach Railway paneldan DEBUG=False qilsa bo'ladi
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# ✅ Bo'shliqlarni (probellarni) avtomatik tozalaydigan xavfsiz ALLOWED_HOSTS
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
     'ALLOWED_HOSTS',
     'localhost,127.0.0.1,.railway.app,.up.railway.app'
@@ -59,7 +54,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Boshliq.wsgi.application'
 
-# ✅ TO'G'RILANDI: Railway PostgreSQL bazasi bo'lsa unga ulanadi, bo'lmasa SQLite ishlaydi
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

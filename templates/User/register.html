@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
   <meta name="theme-color" content="#050a0f"/>
   <title>Mycod1ng-run · Ro'yxatdan O't</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght|700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --neon: #00f5a0;
@@ -309,6 +309,10 @@
       box-shadow:0 4px 28px rgba(0,245,160,0.22);
       transition:all 0.25s;
       margin-top:4px;
+      display: inline-block;
+      text-decoration: none;
+      text-align: center;
+      line-height: 22px;
     }
     .btn-submit:hover{box-shadow:0 4px 40px rgba(0,245,160,0.4);}
     .btn-submit:active{transform:scale(0.98);box-shadow:0 0 50px rgba(0,245,160,0.55);}
@@ -421,9 +425,6 @@
     .anim-3{animation:fadeIn 0.5s ease 0.25s both;}
     .anim-4{animation:fadeIn 0.5s ease 0.35s both;}
     .anim-5{animation:fadeIn 0.5s ease 0.45s both;}
-
-    /* ripple */
-    @keyframes rippleAnim{to{width:200px;height:200px;opacity:0;}}
   </style>
 </head>
 <body>
@@ -431,17 +432,14 @@
 <canvas id="bg-canvas"></canvas>
 <div class="scan-line"></div>
 
-<!-- NAV -->
 <nav>
   <div class="logo">Mycod1ng<span>-run</span></div>
 </nav>
 
-<!-- MAIN -->
 <main>
   <div class="reg-card">
     <div class="card-top-line"></div>
 
-    <!-- Header -->
     <div class="card-header anim-1">
       <div class="header-badge">🚀 Yangi Akkaunt</div>
       <h1 class="card-title">
@@ -451,14 +449,13 @@
       <p class="card-subtitle">Hududingni da'vo qil — birinchi bo'l, yutib ol.</p>
     </div>
 
-    <!-- Form -->
-    <form class="reg-form anim-4" id="reg-form" onsubmit="handleSubmit(event)" novalidate>
+    <form class="reg-form anim-4" id="reg-form" method="POST" onsubmit="handleSubmit(event)" novalidate>
+      {% csrf_token %}
 
-      <!-- Full Name -->
       <div class="field-group" id="fg-name">
         <label class="field-label" for="name">To'liq Ism</label>
         <div class="field-wrap">
-          <input class="field-input" type="text" id="name" name="name"
+          <input class="field-input" type="text" id="name" name="first_name"
             placeholder="Sardor Aliyev" autocomplete="name"
             oninput="clearErr('fg-name')"/>
           <span class="field-icon">👤</span>
@@ -466,9 +463,8 @@
         <span class="field-error" id="err-name">Ism kamida 2 ta harf bo'lishi kerak</span>
       </div>
 
-      <!-- Username -->
       <div class="field-group" id="fg-username">
-        <label class="field-label" for="username">Foydalanuvchi Nomi</label>
+        <label class="field-label" for="username">Username yarating!</label>
         <div class="field-wrap">
           <input class="field-input" type="text" id="username" name="username"
             placeholder="sardor_run" autocomplete="username"
@@ -479,12 +475,12 @@
         <div id="username-status" style="font-size:0.67rem;margin-top:5px;letter-spacing:1px;display:none;"></div>
       </div>
 
-      <!-- Phone -->
       <div class="field-group" id="fg-phone">
         <label class="field-label" for="phone">Telefon Raqam</label>
         <div class="field-wrap phone-wrap">
           <span class="phone-prefix">🇺🇿 +998</span>
-          <input class="field-input phone-input" type="tel" id="phone" name="phone"
+          <input type="hidden" id="phone_number_hidden" name="phone_number">
+          <input class="field-input phone-input" type="tel" id="phone"
             placeholder="90 123 45 67" maxlength="12"
             autocomplete="tel-national"
             oninput="formatPhone(this);clearErr('fg-phone')"/>
@@ -492,7 +488,6 @@
         <span class="field-error" id="err-phone">To'g'ri telefon raqam kiriting</span>
       </div>
 
-      <!-- Password -->
       <div class="field-group" id="fg-password">
         <label class="field-label" for="password">Parol</label>
         <div class="field-wrap">
@@ -514,12 +509,11 @@
         <span class="field-error" id="err-password">Kamida 8 ta belgi kerak</span>
       </div>
 
-      <!-- Confirm Password -->
       <div class="field-group" id="fg-confirm">
         <label class="field-label" for="confirm">Parolni Tasdiqlash</label>
         <div class="field-wrap">
           <input class="field-input has-toggle" type="password" id="confirm"
-            name="confirm" placeholder="Parolni qayta kiriting..."
+            placeholder="Parolni qayta kiriting..."
             autocomplete="new-password"
             oninput="clearErr('fg-confirm')"/>
           <span class="field-icon">🛡️</span>
@@ -529,7 +523,6 @@
         <span class="field-error" id="err-confirm">Parollar mos kelmadi</span>
       </div>
 
-      <!-- Terms -->
       <div class="terms-row">
         <div class="custom-check" id="check-box" onclick="toggleCheck()" role="checkbox" aria-checked="false" tabindex="0">
           <span class="checkmark">✓</span>
@@ -541,22 +534,17 @@
         </label>
       </div>
 
-      <!-- Submit -->
-      <a href="#" style="text-decoration: none; display: inline-block;">
-        <button type="button" class="btn-submit" id="submit-btn">
-            <span class="btn-shine"></span>
-            <span class="btn-text">Ro'yhatdan O'tish</span>
-        </button>
-        </a>
+      <button type="submit" class="btn-submit" id="submit-btn">
+          <span class="btn-shine"></span>
+          <span class="btn-text">Ro'yhatdan O'tish</span>
+      </button>
 
-      <!-- Divider -->
       <div class="divider" style="margin:8px 0 4px;">
         <div class="divider-line"></div>
         <span class="divider-text">yoki</span>
         <div class="divider-line"></div>
       </div>
 
-      <!-- Social Buttons -->
       <div class="social-grid">
         <button type="button" class="social-btn btn-google" onclick="socialAuth('Google')">
           <span class="shine"></span>
@@ -587,17 +575,14 @@
       </div>
     </form>
 
-    <!-- Login link -->
     <div class="login-link anim-5">
-      Akkauntingiz bormi? <a href="#" onclick="showToast('Kirish sahifasiga yo'naltirilmoqda...','info','ℹ️');return false;">Kirish</a>
+      Akkauntingiz bormi? <a href="#" onclick="showToast('Kirish sahifasiga yo\'naltirilmoqda...','info','ℹ️');return false;">Kirish</a>
     </div>
   </div>
 </main>
 
-<!-- Toast -->
 <div id="toast"><span class="toast-icon" id="toast-icon">✅</span><span id="toast-msg"></span></div>
 
-<!-- Success Overlay -->
 <div id="success-overlay">
   <div class="success-ring">
     <div class="success-icon">🏆</div>
@@ -702,6 +687,10 @@ function socialAuth(provider){
 function formatPhone(input){
   let v=input.value.replace(/\D/g,'');
   if(v.length>9) v=v.slice(0,9);
+  
+  // Haqiqiy probelsiz qiymatni hidden inputga yuklaymiz
+  document.getElementById('phone_number_hidden').value = v;
+
   const p=[];
   if(v.length>0) p.push(v.slice(0,2));
   if(v.length>2) p.push(v.slice(2,5));
@@ -728,7 +717,6 @@ function checkUsername(input){
   st.style.color='rgba(200,255,240,0.4)';
   st.textContent='⏳ Tekshirilmoqda...';
   usernameTimer=setTimeout(()=>{
-    // Simulate availability check
     const taken=['admin','user','test','sardor','run','mycod1ng'];
     if(taken.includes(v.toLowerCase())){
       st.style.color='#ff3c6f';
@@ -817,7 +805,7 @@ function validate(){
 }
 
 // ══════════════════════════════════════════
-//  SUBMIT
+//  SUBMIT (DJANGO BILAN INTEGRATSIYA)
 // ══════════════════════════════════════════
 function handleSubmit(e){
   e.preventDefault();
@@ -827,25 +815,20 @@ function handleSubmit(e){
   btn.classList.add('loading');
   btn.disabled=true;
 
-  // Simulate API call
-  setTimeout(()=>{
-    btn.classList.remove('loading');
-    btn.disabled=false;
-    const name=document.getElementById('name').value.trim().split(' ')[0];
-    document.getElementById('success-msg').innerHTML=
-      `<strong style="color:var(--neon)">${name}</strong>, akkauntingiz tayyor!<br/>
-       Endi hududingizni egallashni boshlang! 🗺️`;
-    document.getElementById('success-overlay').classList.add('show');
+  const name=document.getElementById('name').value.trim().split(' ')[0];
+  document.getElementById('success-msg').innerHTML=
+    `<strong style="color:var(--neon)">${name}</strong>, akkauntingiz tayyor!<br/>
+     Ma'lumotlar saqlanmoqda... 🗺️`;
+  document.getElementById('success-overlay').classList.add('show');
 
-    // Auto-hide after 4s
-    setTimeout(()=>{
-      document.getElementById('success-overlay').classList.remove('show');
-    },4500);
-  },1800);
+  // 1.5 soniyadan keyin formani Django backend-ga yuboradi
+  setTimeout(()=>{
+    document.getElementById('reg-form').submit();
+  }, 1500);
 }
 
 // ══════════════════════════════════════════
-//  RIPPLE
+//  RIPPLE EFFECT
 // ══════════════════════════════════════════
 document.querySelectorAll('.social-btn,.btn-submit,.back-btn').forEach(btn=>{
   btn.addEventListener('touchstart', e=>{

@@ -329,17 +329,22 @@
       <p class="card-subtitle">Profilingizga kiring va hududni himoya qiling.</p>
     </div>
 
-    <form class="login-form anim-2" id="login-form" onsubmit="handleLogin(event)" novalidate>
+    {% if messages %}
+      {% for message in messages %}
+        <span id="django-msg-holder" data-msg="{{ message }}" data-tags="{{ message.tags }}" style="display:none;"></span>
+      {% endfor %}
+    {% endif %}
 
-      <div class="field-group" id="fg-identity">
-        <label class="field-label" for="identity">Foydalanuvchi nomi yoki Telefon</label>
+    <form method="POST" class="login-form anim-2" id="login-form" onsubmit="handleLogin(event)" novalidate>
+      {% csrf_token %} <div class="field-group" id="fg-identity">
+        <label class="field-label" for="identity">Username kiriting!</label>
         <div class="field-wrap">
-          <input class="field-input" type="text" id="identity" name="identity"
+          <input class="field-input" type="text" id="identity" name="username"
             placeholder="sardor_run yoki 901234567" autocomplete="username"
             oninput="clearErr('fg-identity')"/>
           <span class="field-icon">⚡</span>
         </div>
-        <span class="field-error" id="err-identity">Foydalanuvchi nomi yoki raqamni kiriting</span>
+        <span class="field-error" id="err-identity">Username kiriting!</span>
       </div>
 
       <div class="field-group" id="fg-password">
@@ -401,7 +406,7 @@
     </form>
 
     <div class="register-link">
-      Yangi foydalanuvchimisiz? <a href="register.html">Ro'yxatdan o'tish</a>
+      Yangi foydalanuvchimisiz? <a href="{% url 'register_page' %}">Ro'yxatdan o'tish</a>
     </div>
   </div>
 </main>
@@ -444,7 +449,7 @@ class Pt{
   }
 }
 
-const count = window.innerWidth<480?40:70; // Mobile optimizatsiya
+const count = window.innerWidth<480?40:70;
 for(let i=0;i<count;i++) pts.push(new Pt());
 
 function animBg(){
@@ -482,6 +487,20 @@ function showToast(msg, type='success', icon='✅'){
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>{t.classList.remove('show');},3200);
 }
+
+// Django xatolarini Toast orqali ko'rsatish logikasi
+window.addEventListener('DOMContentLoaded', () => {
+  const msgHolder = document.getElementById('django-msg-holder');
+  if(msgHolder){
+    const msg = msgHolder.getAttribute('data-msg');
+    const tags = msgHolder.getAttribute('data-tags');
+    let toastType = 'error';
+    let toastIcon = '⚠️';
+    if(tags.includes('success')) { toastType = 'success'; toastIcon = '🎯'; }
+    if(tags.includes('info')) { toastType = 'info'; toastIcon = 'ℹ️'; }
+    showToast(msg, toastType, toastIcon);
+  }
+});
 
 // ══════════════════════════════════════════
 //  PASSWORD TOGGLE
@@ -541,12 +560,10 @@ function handleLogin(e){
   btn.classList.add('loading');
   btn.disabled=true;
 
-  // API so'rovini imitatsiya qilish
+  // 3. DIQQAT: Formani Backend-ga (views.py) yuborish uchun form.submit() chaqirildi!
   setTimeout(()=>{
-    btn.classList.remove('loading');
-    btn.disabled=false;
-    showToast('Tizimga muvaffaqiyatli kirdingiz! 🚀', 'success', '🎯');
-  },1500);
+    document.getElementById('login-form').submit();
+  }, 1000); 
 }
 
 // Mobile teginish effekti (Ripple)
