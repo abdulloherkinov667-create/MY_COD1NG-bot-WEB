@@ -404,17 +404,19 @@ body{
     <span class="sec-title">TEZKOR HARAKATLAR</span>
   </div>
   <div class="actions-row">
-    <button class="action-btn primary" onclick="playWhoosh()" style="transition-delay: 2.6s;">
-      <span class="shine"></span>
-      <span class="action-icon">
-        <svg viewBox="0 0 24 24" fill="#03070c"><path d="M19 11.5s-2 2.5-4 2.5-3-1.5-5-1.5-3.5 1.5-4.5 2c-.5.25-.5.75 0 1 1 1 3 2.5 5.5 2.5s4-1.5 5.5-2.5 2.5-3.5 2.5-3.5zM11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19 20 15.19 20 10.5 16.19 2 11.5 2zm2.5 11.5l-4 2.5V11h4v2.5z"/></svg>
-      </span>
-      <div class="action-text-container">
-        <div class="action-label">YUGURISHNI BOSHLASH</div>
-        <div class="action-sub">Mashg'ulotni hoziroq yoqish</div>
-      </div>
-    </button>
-  </div>
+      <a href="{% url 'run_page' %}" style="text-decoration: none; display: block;" onclick="playWhoosh()">
+        <button class="action-btn primary" style="transition-delay: 2.6s; cursor: pointer;">
+          <span class="shine"></span>
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24" fill="#03070c"><path d="M19 11.5s-2 2.5-4 2.5-3-1.5-5-1.5-3.5 1.5-4.5 2c-.5.25-.5.75 0 1 1 1 3 2.5 5.5 2.5s4-1.5 5.5-2.5 2.5-3.5 2.5-3.5zM11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19 20 15.19 20 10.5 16.19 2 11.5 2zm2.5 11.5l-4 2.5V11h4v2.5z"/></svg>
+          </span>
+          <div class="action-text-container">
+            <div class="action-label">YUGURISHNI BOSHLASH</div>
+            <div class="action-sub">Mashg'ulotni hoziroq yoqish</div>
+          </div>
+        </button>
+      </a>
+    </div>
 
   <div class="sec-head">
     <span class="sec-title">SO'NGI FAOLIYAT</span>

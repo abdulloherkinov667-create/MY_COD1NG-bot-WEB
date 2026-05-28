@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from user_app.models import Users
 
+
+
 def register_page(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -42,3 +44,7 @@ def login_page(request):
         else:
             messages.error(request, "Barcha maydonlarni to'ldiring!")
     return render(request, 'User/login.html')
+
+
+def run_page(request):
+    return render(request, 'User/run_page.html')
