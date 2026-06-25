@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Django (manage.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/MY_COD1NG-bot-WEB/manage.py",
+            "args": ["runserver"],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/MY_COD1NG-bot-WEB"
+        }
+    ]
+}
