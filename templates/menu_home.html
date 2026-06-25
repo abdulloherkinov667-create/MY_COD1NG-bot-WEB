@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gusto & Co. — Menyu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#1a2e1a;
+  --green-mid:#2d4a2d;
+  --gold:#b8962e;
+  --cream:#f5f3ec;
+  --white:#ffffff;
+  --text:#1a1a1a;
+  --muted:#6b6b5a;
+  --border:#e0ddd4;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:var(--cream);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:72px;
+}
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--green);
+  text-decoration:none;
+}
+.logo em{font-style:italic}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{
+  font-size:11px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:var(--text);
+  text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover{color:var(--green)}
+.nav-cart-btn{
+  display:flex;align-items:center;gap:8px;
+  background:var(--green);color:#fff;
+  border:none;border-radius:30px;
+  padding:12px 22px;cursor:pointer;
+  font-family:'Montserrat',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;transition:background .2s;
+}
+.nav-cart-btn:hover{background:var(--green-mid)}
+.cart-badge{
+  background:var(--gold);color:#fff;
+  width:18px;height:18px;border-radius:50%;
+  font-size:10px;font-weight:700;
+  display:none;align-items:center;justify-content:center;
+}
+.cart-badge.show{display:flex}
+
+/* PAGE HEADER */
+.page-header{text-align:center;padding:44px 40px 20px}
+.page-header p{font-size:13px;letter-spacing:3px;color:var(--muted);font-weight:400}
+
+/* FILTERS */
+.filters{padding:0 40px 36px;display:flex;gap:10px;flex-wrap:wrap}
+.filter-pill{
+  padding:11px 22px;border-radius:30px;
+  font-size:12px;font-weight:500;
+  border:1.5px solid var(--border);
+  background:var(--white);color:var(--text);
+  cursor:pointer;transition:all .22s;
+  font-family:'Montserrat',sans-serif;
+}
+.filter-pill:hover{border-color:var(--green);color:var(--green)}
+.filter-pill.active{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* GRID */
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  padding:0 40px 80px;
+}
+
+/* CARD */
+.card{
+  background:var(--white);border-radius:16px;overflow:hidden;
+  border:1px solid var(--border);cursor:pointer;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.1)}
+
+.card-img{
+  position:relative;height:240px;overflow:hidden;
+  background:#d4d0c4;
+  display:flex;align-items:center;justify-content:center;
+}
+.card-img canvas{
+  width:100%;height:100%;
+  object-fit:cover;display:block;
+  position:absolute;inset:0;
+}
+.card-img-loader{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:10px;
+  background:var(--cream);z-index:2;
+  transition:opacity .4s;
+}
+.card-img-loader.done{opacity:0;pointer-events:none}
+.loader-ring{
+  width:32px;height:32px;border-radius:50%;
+  border:2.5px solid var(--border);
+  border-top-color:var(--green);
+  animation:spin .8s linear infinite;
+}
+.loader-txt{font-size:10px;color:var(--muted);letter-spacing:1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.card-badge{
+  position:absolute;top:14px;left:14px;z-index:3;
+  background:var(--gold);color:#fff;
+  border-radius:20px;padding:5px 12px;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;gap:5px;
+}
+.card-body{padding:20px 20px 22px}
+.card-cat{
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:8px;
+}
+.card-name{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:600;color:var(--text);
+  margin-bottom:8px;line-height:1.25;
+}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--border);
+}
+.card-price{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--gold);
+}
+.card-price span{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;color:var(--muted)}
+.add-btn{
+  background:var(--green);color:#fff;
+  border:none;border-radius:30px;
+  padding:10px 18px;
+  font-family:'Montserrat',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:1px;
+  cursor:pointer;transition:all .22s;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.add-btn:hover{background:var(--green-mid)}
+.add-btn.in-cart{background:var(--gold)}
+
+/* ── BOTTOM SHEET (iOS/Yandex uslubi) ── */
+.sheet-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0);
+  pointer-events:none;
+  transition:background .3s;
+}
+.sheet-overlay.open{
+  background:rgba(0,0,0,0.4);
+  pointer-events:all;
+}
+.sheet{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  z-index:501;
+  background:var(--white);
+  border-radius:20px 20px 0 0;
+  /* exactly half screen */
+  height:52vh;
+  transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.32,0,.15,1);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.18);
+}
+.sheet.open{transform:translateY(0)}
+
+/* drag handle */
+.sheet-handle{
+  flex-shrink:0;
+  display:flex;justify-content:center;align-items:center;
+  padding:12px 0 4px;
+}
+.sheet-handle-bar{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--border);
+}
+
+.sheet-inner{
+  display:flex;height:100%;overflow:hidden;
+}
+
+/* left: image */
+.sheet-img-side{
+  flex:0 0 42%;
+  position:relative;overflow:hidden;
+  background:#d4d0c4;
+}
+.sheet-img-side canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+.sheet-img-loader{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;
+  background:var(--cream);z-index:2;transition:opacity .4s;
+}
+.sheet-img-loader.done{opacity:0;pointer-events:none}
+
+/* right: content */
+.sheet-content{
+  flex:1;
+  padding:16px 20px 16px 18px;
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+.sheet-cat{
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:6px;
+}
+.sheet-name{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;color:var(--text);
+  margin-bottom:6px;line-height:1.25;
+}
+.sheet-desc{
+  font-size:11px;color:var(--muted);line-height:1.65;
+  margin-bottom:auto;padding-bottom:12px;
+}
+.sheet-footer{
+  padding-top:12px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sheet-price{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;color:var(--gold);
+  flex-shrink:0;
+}
+.sheet-price span{
+  font-family:'Montserrat',sans-serif;
+  font-size:10px;color:var(--muted);font-weight:400;
+}
+.qty-row{
+  display:flex;align-items:center;
+  background:var(--cream);border-radius:30px;
+  border:1.5px solid var(--border);overflow:hidden;
+  flex-shrink:0;
+}
+.qty-btn{
+  width:34px;height:34px;border:none;background:none;
+  font-size:18px;cursor:pointer;color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;font-weight:500;
+}
+.qty-btn:hover{background:var(--border)}
+.qty-num{min-width:28px;text-align:center;font-size:13px;font-weight:700}
+.sheet-add-btn{
+  flex:1;background:var(--green);color:#fff;
+  border:none;border-radius:30px;
+  padding:11px 14px;
+  font-family:'Montserrat',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.8px;
+  cursor:pointer;transition:all .22s;
+  white-space:nowrap;
+}
+.sheet-add-btn:hover{background:var(--green-mid)}
+.sheet-add-btn.go-cart{background:var(--gold)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--green);color:#fff;
+  border-radius:30px;padding:12px 24px;
+  font-size:12px;font-weight:600;
+  z-index:900;opacity:0;
+  transition:all .35s cubic-bezier(.32,0,.2,1);
+  white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 20px;height:62px}
+  .logo{font-size:19px}
+  .nav-links{display:none}
+  .page-header{padding:28px 20px 14px}
+  .filters{padding:0 20px 24px;gap:8px}
+  .filter-pill{padding:9px 14px;font-size:11px}
+  .menu-grid{grid-template-columns:1fr;gap:16px;padding:0 20px 60px}
+  .card-img{height:200px}
+  /* mobile sheet: taller since horizontal layout */
+  .sheet{height:56vh}
+  .sheet-img-side{flex:0 0 38%}
+}
+@media(min-width:901px) and (max-width:1100px){
+  .menu-grid{grid-template-columns:repeat(2,1fr)}
+}
+/* Desktop: sheet max-width centered */
+@media(min-width:700px){
+  .sheet{
+    left:50%;right:auto;
+    width:100%;max-width:620px;
+    transform:translateX(-50%) translateY(100%);
+    border-radius:20px 20px 0 0;
+  }
+  .sheet.open{transform:translateX(-50%) translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">Gusto <em>&</em> Co.</a>
+  <ul class="nav-links">
+    <li><a href="#">Menyu</a></li>
+    <li><a href="#">Biz haqimizda</a></li>
+    <li><a href="#">Aloqa</a></li>
+  </ul>
+  <button class="nav-cart-btn" id="cartBtn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+    Savat
+    <span class="cart-badge" id="cartBadge">0</span>
+  </button>
+</nav>
+
+<div class="page-header"><p>premium taomlar</p></div>
+
+<div class="filters">
+  <button class="filter-pill active" data-f="all">Barchasi</button>
+  <button class="filter-pill" data-f="suyuq">Suyuq taomlar</button>
+  <button class="filter-pill" data-f="ikkinchi">Ikkinchi taomlar</button>
+  <button class="filter-pill" data-f="salat">Salatlar</button>
+  <button class="filter-pill" data-f="ichimlik">Ichimliklar</button>
+  <button class="filter-pill" data-f="desert">Desertlar</button>
+</div>
+
+<div class="menu-grid" id="menuGrid"></div>
+
+<!-- BOTTOM SHEET -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-inner">
+    <div class="sheet-img-side">
+      <canvas id="sheetCanvas" width="300" height="400"></canvas>
+      <div class="sheet-img-loader" id="sheetLoader">
+        <div class="loader-ring"></div>
+        <span class="loader-txt">Yuklanmoqda...</span>
+      </div>
+    </div>
+    <div class="sheet-content">
+      <div class="sheet-cat" id="sCat"></div>
+      <div class="sheet-name" id="sName"></div>
+      <div class="sheet-desc" id="sDesc"></div>
+      <div class="sheet-footer">
+        <div class="sheet-price" id="sPrice"></div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-num" id="qtyNum">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <button class="sheet-add-btn" id="sheetAddBtn" onclick="addFromSheet()">+ Qo'shish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Savatga qo'shildi</div>
+
+<script>
+// ── DATA ──
+const ITEMS = [
+  {
+    id:1, cat:'ikkinchi', catLabel:'Ikkinchi taomlar',
+    name:"Zaytunli Premium Bifsteks",
+    desc:"Mol go'shti, zaytun moyi, rozmaril, sarimsoq, deniz tuzi bilan pishirilgan.",
+    price:'85 000', badge:'★ Mashhur',
+    prompt:"A luxurious grilled beef steak glistening with olive oil and herbs on a dark wooden board, tomatoes on the side, moody restaurant lighting, food photography"
+  },
+  {
+    id:2, cat:'suyuq', catLabel:'Suyuq taomlar',
+    name:"Lag'mon Premium",
+    desc:"Qo'lda yasalgan lag'mon, mol go'shti, ko'katlar va mazali sho'rva.",
+    price:'35 000', badge:null,
+    prompt:"A steaming bowl of lagman noodle soup with tender beef, fresh herbs and colorful vegetables, close up food photography, warm lighting"
+  },
+  {
+    id:3, cat:'salat', catLabel:'Salatlar',
+    name:"Toshkent Salati",
+    desc:"Yangi sabzavotlar, norin, mol tili, ko'katlar va zaytun moyi.",
+    price:'28 000', badge:null,
+    prompt:"A vibrant colorful salad bowl with fresh mixed vegetables, avocado, radishes, greens on a white plate, bright natural light, overhead food photography"
+  },
+  {
+    id:4, cat:'desert', catLabel:'Desertlar',
+    name:"Tiramisu Royale",
+    desc:"Italyan klassiği, 72% kakao, mascarpone krem, kofe aromi bilan.",
+    price:'32 000', badge:'★ Yangi',
+    prompt:"An elegant tiramisu dessert dusted with dark cocoa powder in a white ceramic dish, Italian cafe style, soft bokeh background, food photography"
+  },
+  {
+    id:5, cat:'ichimlik', catLabel:'Ichimliklar',
+    name:"Saffron Latte",
+    desc:"Zarfaron, oq shokolad va ko'pik bilan — issiq yoki sovuq.",
+    price:'18 000', badge:null,
+    prompt:"A beautiful golden saffron latte with latte art foam in a white ceramic cup, golden spice on top, warm cafe ambiance, food photography"
+  }
+];
+
+// ── STATE ──
+let cart = {};
+let activeItem = null;
+let modalQty = 1;
+let currentFilter = 'all';
+// canvas cache: id -> ImageData blob URL
+let imgCache = {};
+
+// ── AI IMAGE GENERATION ──
+async function generateImage(prompt, canvasEl, loaderId) {
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model:"claude-sonnet-4-6",
+        max_tokens:1000,
+        messages:[{
+          role:"user",
+          content:`Generate a description for drawing this food on canvas with JavaScript: ${prompt}. 
+          Return ONLY a JSON object (no markdown) with these fields:
+          - bgColor: hex color for background (dark moody like #2a1f1a)
+          - plateColor: hex for plate/surface (#e8e0d0 or similar)
+          - foodEmoji: single most relevant emoji
+          - accentColor: hex for garnish/sauce accent color
+          - title: 2-word title of the dish`
+        }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content[0].text;
+    const clean = text.replace(/```json|```/g,'').trim();
+    const info = JSON.parse(clean);
+    drawFoodArt(canvasEl, info);
+    if(loaderId){
+      const ldr = document.getElementById(loaderId);
+      if(ldr) ldr.classList.add('done');
+    }
+    return info;
+  } catch(e) {
+    // fallback
+    drawFoodArtFallback(canvasEl, prompt);
+    if(loaderId){
+      const ldr = document.getElementById(loaderId);
+      if(ldr) ldr.classList.add('done');
+    }
+  }
+}
+
+function drawFoodArt(canvas, info) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // background
+  ctx.fillStyle = info.bgColor || '#2a1f1a';
+  ctx.fillRect(0,0,W,H);
+
+  // subtle texture
+  for(let i=0;i<800;i++){
+    ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.03})`;
+    ctx.fillRect(Math.random()*W, Math.random()*H, Math.random()*3, Math.random()*3);
+  }
+
+  // plate / surface
+  ctx.beginPath();
+  ctx.ellipse(W/2, H*0.58, W*0.38, H*0.22, 0, 0, Math.PI*2);
+  ctx.fillStyle = info.plateColor || '#e8e0d0';
+  ctx.fill();
+
+  // plate rim shadow
+  ctx.beginPath();
+  ctx.ellipse(W/2, H*0.58, W*0.38, H*0.22, 0, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+
+  // inner plate highlight
+  ctx.beginPath();
+  ctx.ellipse(W/2, H*0.57, W*0.28, H*0.16, 0, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fill();
+
+  // accent sauce drops
+  const accent = info.accentColor || '#8b2020';
+  for(let i=0;i<5;i++){
+    const ang = (i/5)*Math.PI*2;
+    const rx = W*0.25+Math.random()*W*0.05;
+    const ry = H*0.13+Math.random()*H*0.03;
+    ctx.beginPath();
+    ctx.ellipse(W/2+Math.cos(ang)*W*0.18, H*0.58+Math.sin(ang)*H*0.1, rx*0.06, ry*0.08, ang, 0, Math.PI*2);
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.7;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // food emoji large
+  ctx.font = `${Math.min(W,H)*0.28}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(info.foodEmoji || '🍽️', W/2, H*0.5);
+
+  // steam lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  for(let i=0;i<3;i++){
+    const sx = W*0.35 + i*W*0.14;
+    ctx.beginPath();
+    ctx.moveTo(sx, H*0.32);
+    ctx.bezierCurveTo(sx-8, H*0.24, sx+8, H*0.16, sx, H*0.1);
+    ctx.stroke();
+  }
+
+  // title at bottom
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = `500 ${W*0.065}px 'Montserrat', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText((info.title||'').toUpperCase(), W/2, H*0.88);
+
+  // gold accent line bottom
+  ctx.fillStyle = '#b8962e';
+  ctx.fillRect(W*0.38, H*0.92, W*0.24, 2);
+}
+
+function drawFoodArtFallback(canvas, prompt) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const colors = ['#2a1f1a','#1a2a1a','#1a1a2a','#2a2010'];
+  const bg = colors[Math.floor(Math.random()*colors.length)];
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+  ctx.beginPath();
+  ctx.ellipse(W/2,H*0.58,W*0.36,H*0.21,0,0,Math.PI*2);
+  ctx.fillStyle='#e0d8c8'; ctx.fill();
+  ctx.font=`${W*0.26}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🍽️',W/2,H*0.5);
+  ctx.fillStyle='rgba(255,255,255,0.35)';
+  ctx.font=`${W*0.06}px Montserrat`; ctx.fillText('GUSTO & CO.',W/2,H*0.88);
+  const ldr = canvas.parentElement && canvas.parentElement.querySelector('.card-img-loader, .sheet-img-loader');
+  if(ldr) ldr.classList.add('done');
+}
+
+// ── RENDER GRID ──
+function renderGrid(){
+  const grid = document.getElementById('menuGrid');
+  grid.innerHTML='';
+  const filtered = currentFilter==='all' ? ITEMS : ITEMS.filter(i=>i.cat===currentFilter);
+  filtered.forEach(item=>{
+    const inCart = cart[item.id]>0;
+    const div = document.createElement('div');
+    div.className='card';
+    div.onclick = ()=>openSheet(item);
+
+    div.innerHTML=`
+      <div class="card-img">
+        <canvas id="canvas_${item.id}" width="600" height="400"></canvas>
+        <div class="card-img-loader" id="loader_${item.id}">
+          <div class="loader-ring"></div>
+          <span class="loader-txt">Rasm tayyorlanmoqda...</span>
+        </div>
+        ${item.badge?`<div class="card-badge">${item.badge}</div>`:''}
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${item.catLabel}</div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-footer">
+          <div class="card-price">${item.price} <span>so'm</span></div>
+          <button class="add-btn ${inCart?'in-cart':''}" onclick="quickAdd(event,${item.id})">
+            ${inCart?"✓ Savatga o'tish":"+ Qo'shish"}
+          </button>
+        </div>
+      </div>`;
+    grid.appendChild(div);
+
+    // draw or use cached
+    const canvas = document.getElementById(`canvas_${item.id}`);
+    if(imgCache[item.id]){
+      drawFoodArt(canvas, imgCache[item.id]);
+      document.getElementById(`loader_${item.id}`).classList.add('done');
+    } else {
+      generateImage(item.prompt, canvas, `loader_${item.id}`).then(info=>{
+        if(info) imgCache[item.id] = info;
+      });
+    }
+  });
+}
+
+// ── QUICK ADD (card button) ──
+function quickAdd(e, id){
+  e.stopPropagation();
+  if(cart[id]){ showToast("Allaqachon savatda!"); return; }
+  cart[id]=1;
+  updateBadge(); showToast("✓ Savatga qo'shildi"); renderGrid();
+}
+
+// ── BOTTOM SHEET ──
+function openSheet(item){
+  activeItem = item;
+  modalQty = cart[item.id]||1;
+  document.getElementById('sCat').textContent = item.catLabel;
+  document.getElementById('sName').textContent = item.name;
+  document.getElementById('sDesc').textContent = item.desc;
+  document.getElementById('sPrice').innerHTML = `${item.price} <span>so'm</span>`;
+  document.getElementById('qtyNum').textContent = modalQty;
+
+  const btn = document.getElementById('sheetAddBtn');
+  if(cart[item.id]){
+    btn.textContent="✓ Savatga o'tish"; btn.classList.add('go-cart');
+  } else {
+    btn.textContent="+ Qo'shish"; btn.classList.remove('go-cart');
+  }
+
+  // sheet image
+  const sc = document.getElementById('sheetCanvas');
+  const sl = document.getElementById('sheetLoader');
+  sl.classList.remove('done');
+  if(imgCache[item.id]){
+    drawFoodArt(sc, imgCache[item.id]);
+    setTimeout(()=>sl.classList.add('done'),200);
+  } else {
+    generateImage(item.prompt, sc, 'sheetLoader').then(info=>{
+      if(info) imgCache[item.id]=info;
+    });
+  }
+
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeSheet(){
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('sheet').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function changeQty(d){
+  modalQty = Math.max(1, modalQty+d);
+  document.getElementById('qtyNum').textContent=modalQty;
+}
+
+function addFromSheet(){
+  if(!activeItem) return;
+  if(cart[activeItem.id]){ closeSheet(); return; }
+  cart[activeItem.id]=modalQty;
+  updateBadge(); showToast("✓ Savatga qo'shildi"); renderGrid();
+  const btn=document.getElementById('sheetAddBtn');
+  btn.textContent="✓ Savatga o'tish"; btn.classList.add('go-cart');
+}
+
+// ── HELPERS ──
+function updateBadge(){
+  const n=Object.values(cart).reduce((a,b)=>a+b,0);
+  const b=document.getElementById('cartBadge');
+  b.textContent=n; n>0?b.classList.add('show'):b.classList.remove('show');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg||"✓ Qo'shildi";
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// ── FILTERS ──
+document.querySelectorAll('.filter-pill').forEach(p=>{
+  p.addEventListener('click',function(){
+    document.querySelectorAll('.filter-pill').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter=this.dataset.f;
+    renderGrid();
+  });
+});
+
+// swipe down to close
+let startY=0;
+document.getElementById('sheet').addEventListener('touchstart',e=>startY=e.touches[0].clientY,{passive:true});
+document.getElementById('sheet').addEventListener('touchend',e=>{
+  if(e.changedTouches[0].clientY - startY > 60) closeSheet();
+},{passive:true});
+
+renderGrid();
+</script>
+</body>
+</html>
